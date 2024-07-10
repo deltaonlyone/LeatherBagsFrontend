@@ -2,7 +2,7 @@
     display: flex;
     justify-content: center;
     padding: 2vh 0;
-    margin: 0 10vw;
+    margin: 0 15vw;
 }
 
 .link{
@@ -18,13 +18,14 @@
 }
 
 .wrapper {
+    width: 25vw;
     display: inline-flex;
     list-style: none;
     height: 50px;
     margin: 0;
-    padding-right: 7vw;
     font-family: "Poppins", sans-serif;
     align-items: center;
+    padding: 0;
 
 }
 
@@ -110,7 +111,7 @@
 }
 
 .phoneButton{
-    padding-left: 7vw;
+    width: 25vw;
     display: inline-flex;
     justify-content: right;
 }
