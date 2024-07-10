@@ -1,5 +1,5 @@
-import logo from './logo.svg';
 import './App.css';
+import './styles.css';
 import {Helmet} from "react-helmet";
 import Home from "./components/homePage/Home";
 import Login from "./components/logginPage/Login";

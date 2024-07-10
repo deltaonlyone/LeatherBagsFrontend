@@ -1,0 +1,16 @@
+.feature {
+    align-items: center;
+    margin-bottom: 1vh;
+    height: 2.5em;
+}
+
+.text {
+    text-align: left;
+    margin: 0 0 0 0.5vw;
+    font-weight: bolder;
+}
+
+.mark {
+    width: 1.8vw;
+    aspect-ratio: auto;
+}

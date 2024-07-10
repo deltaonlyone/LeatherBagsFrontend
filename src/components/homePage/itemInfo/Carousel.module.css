@@ -1,0 +1,23 @@
+:root {
+    --slider-width: 30vw;
+    --main-img-height: 60vh;
+    --small-img-size: 9vw;
+}
+
+.coveredImage {
+    position: relative;
+    top: 0;
+    left: 0;
+    border-radius: 1vw;
+    overflow: hidden;
+}
+
+.arrowLeft {
+    left: 0;
+    rotate: 90deg;
+}
+
+.arrowRight {
+    right: 0;
+    rotate: -90deg;
+}

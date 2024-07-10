@@ -1,0 +1,29 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --main-background-color: #E8CBA8;
+    --secondary-background-color: #C98345;
+    --main-text-color: #441F0B;
+    --secondary-text-color: #9F5125;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+}
+
+.block {
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
