@@ -66,7 +66,7 @@ const SmallWrapper = styled.div.withConfig({
         position: absolute;
         top: 0;
         left: 0;
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.4);
         width: ${props => props.smallSize};
         height: ${props => props.smallSize};
     }
@@ -102,8 +102,8 @@ const Carousel = (props) => {
     const setIndexAndPosition = (newIndex) => {
         setIndex(newIndex);
         setXPosition(-newIndex * widthNumber);
-        setSmallXPosition(Math.max(
-            -newIndex * (smallImageSize + 2), maxSmallOffset));
+        setSmallXPosition(Math.min(0, Math.max(
+            -(newIndex - 1) * (smallImageSize + 2), maxSmallOffset)));
     };
 
     const handleClickPrev = () => {

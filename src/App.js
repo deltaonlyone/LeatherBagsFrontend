@@ -17,7 +17,7 @@ function App() {
       <Helmet><title>Leather Bags</title></Helmet>
         <Router>
             <Routes>
-                <Route path="/home" element={<Home></Home>}></Route>
+                <Route path="/" element={<Home></Home>}></Route>
                 <Route path="/login" element={<Login></Login>}></Route>
                 <Route path="/order" element={<Order></Order>}></Route>
             </Routes>

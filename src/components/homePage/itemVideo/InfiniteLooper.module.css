@@ -1,0 +1,27 @@
+@keyframes slideAnimation {
+    from {
+        transform: translateX(0%);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+.looper {
+    width: 100%;
+    overflow: hidden;
+}
+
+.looperContent {
+    display: flex;
+    justify-content: center;
+    width: fit-content;
+}
+
+.looperElement {
+    display: flex;
+}
+
+.animated {
+    animation: slideAnimation linear infinite;
+}
