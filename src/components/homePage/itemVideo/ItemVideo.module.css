@@ -1,0 +1,25 @@
+.container {
+    background-color: var(--secondary-background-color);
+    padding: 5vh 0;
+}
+
+.videoContainer {
+    width: 70vw;
+    border-radius: 2vw;
+    margin-top: 5vh;
+}
+
+.loopingText {
+    font-size: 2em;
+    font-weight: 400;
+    padding-right: 2vw;
+    text-wrap: nowrap;
+}
+
+.loopingTextOdd {
+    color: var(--main-text-color);
+}
+
+.loopingTextEven {
+    color: var(--main-background-color);
+}
