@@ -1,0 +1,33 @@
+.wrapper {
+
+}
+
+.textWrap {
+    margin: 0 15vw;
+    padding: 5vh;
+    font-size: 2vw;
+    font-weight: bold;
+    color: var(--main-text-color);
+}
+
+.statsWrap {
+    background-color: var(--secondary-background-color);
+    display: flex;
+    justify-content: space-around;
+    padding: 0 15vw;
+
+}
+
+.statItem{
+    color: var(--main-text-color);
+}
+
+.numbs{
+    font-size: 2.5vw;
+    font-weight: bold;
+}
+
+.secondaryText{
+    font-size: 1.2vw;
+
+}
