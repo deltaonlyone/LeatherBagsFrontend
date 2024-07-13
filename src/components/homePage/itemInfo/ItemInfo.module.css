@@ -7,11 +7,18 @@
 
 .content {
     justify-content: space-between;
+    flex-wrap: wrap;
     width: 70vw;
 }
 
+.slider {
+    flex-shrink: 0;
+    width: 40%;
+}
+
 .infoText {
-    width: 35vw;
+    flex-shrink: 0;
+    width: 50%;
 }
 
 .titleText {

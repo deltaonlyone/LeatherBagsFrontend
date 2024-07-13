@@ -17,7 +17,7 @@ const TopInfo = () => {
 
             </div>
             <div className={styles.imgWrap}>
-                <img src={"bag2.webp"} alt="bag"/>
+                <img className={styles.topImg} src={"bag2.webp"} alt="bag"/>
                 <div className={styles.saleWrap}>
                     <div className={styles.circle}>-20%</div>
                 </div>
