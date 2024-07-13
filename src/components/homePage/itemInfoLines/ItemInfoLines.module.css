@@ -4,13 +4,18 @@
 
 .textWrap {
     margin: 0 15vw;
-    padding: 5vh;
+    height: 7vw;
+    align-items: center;
+    display: flex;
+    justify-content: space-around;
     font-size: 2vw;
     font-weight: bold;
     color: var(--main-text-color);
 }
 
 .statsWrap {
+    align-items: center;
+    height: 7vw;
     background-color: var(--secondary-background-color);
     display: flex;
     justify-content: space-around;
@@ -18,16 +23,16 @@
 
 }
 
-.statItem{
+.statItem {
     color: var(--main-text-color);
 }
 
-.numbs{
+.numbs {
     font-size: 2.5vw;
     font-weight: bold;
 }
 
-.secondaryText{
+.secondaryText {
     font-size: 1.2vw;
-
+    font-weight: bolder;
 }
