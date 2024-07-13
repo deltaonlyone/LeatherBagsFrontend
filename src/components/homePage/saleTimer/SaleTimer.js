@@ -38,7 +38,7 @@ const SaleTimer = () => {
                     <a>{timeLeft.hours}</a>Годин
                 </div>
                 <div className={styles.time}>
-                    <a>{timeLeft.minutes}</a>Хвилин
+                    <a className={styles.var}>{timeLeft.minutes}</a>Хвилин
                 </div>
             </div>
         </div>
