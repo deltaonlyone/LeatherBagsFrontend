@@ -1,16 +1,18 @@
 .feature {
     align-items: center;
     margin-bottom: 1vh;
-    height: 2.5em;
+    min-height: 2.5em;
+    max-height: 3vh;
 }
 
 .text {
     text-align: left;
+    font-size: 1.2em;
     margin: 0 0 0 0.5vw;
     font-weight: bolder;
 }
 
 .mark {
-    width: 1.8vw;
-    aspect-ratio: auto;
+    height: 3vh;
+    width: auto;
 }

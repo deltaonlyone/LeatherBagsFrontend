@@ -1,0 +1,107 @@
+.orderForm {
+    display: flex;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    background-color: #FFEDDC;
+    align-items: center;
+    justify-content: center;
+    padding: 5%;
+    border-radius: 1vw;
+}
+
+.orderForm h3 {
+    font-weight: 500;
+    font-size: 1.5em;
+}
+
+.orderForm h4 {
+    font-weight: 400;
+    font-size: 1.2em;
+    margin-top: 1vh;
+}
+
+.orderForm h5 {
+    font-weight: 400;
+    font-size: 1.2em;
+    align-self: start;
+    margin-top: 1.5vh;
+}
+
+.orderForm input, select, fieldset {
+    background-color: #E8CBA880;
+    border: none;
+    padding: 1vh 1vw;
+    border-radius: 0.7vw;
+    font-size: 1em;
+}
+
+.orderForm input[type='radio'] {
+    accent-color: var(--main-text-color);
+    background-color: transparent;
+    margin-right: 5%;
+}
+
+.formRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.inputColumn {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    height: 100%;
+}
+
+.inputColumn > input, select, fieldset {
+    margin-top: 1vh;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.inputColumn > fieldset {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+.radioRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    width: 100%;
+}
+
+.radioRow:not(:first-child) {
+    margin-top: 1vh;
+}
+
+.formRow label {
+    font-size: 1em;
+}
+
+.twoColumns {
+    width: 45%;
+}
+
+.oneColumn {
+    width: 70%;
+}
+
+.orderForm > button[type="submit"] {
+    background-color: transparent;
+    color: var(--main-text-color);
+    font-size: 1.2em;
+    padding: 1vh 1vw;
+    margin-top: 2vh;
+    border: var(--main-text-color) 2px solid;
+    border-radius: 1vw;
+}
+
+.orderForm > button[type="submit"]:hover {
+    background-color: transparent;
+    color: var(--main-text-color);
+}
