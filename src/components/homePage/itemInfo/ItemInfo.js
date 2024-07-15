@@ -4,7 +4,7 @@ import ItemFeature from "./ItemFeature";
 
 const ItemInfo = () => {
     return (
-        <div className={style.center}>
+        <div className={'centeredComponent'}>
             <div className={`row ${style.content}`}>
                 <div className={style.slider}>
                     <Carousel mainWidth='30vw' mainHeight='60vh'

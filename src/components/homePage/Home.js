@@ -5,6 +5,7 @@ import NavBar from "./navBar/NavBar";
 import React from "react";
 import TopInfo from "./topInfo/TopInfo";
 import SaleTimer from "./saleTimer/SaleTimer";
+import OrderCreation from "./orderForm/OrderCreation";
 
 
 const Home = () => {
@@ -16,6 +17,9 @@ const Home = () => {
           <SaleTimer></SaleTimer>
           <ItemInfo></ItemInfo>
           <ItemVideo></ItemVideo>
+          <SaleTimer></SaleTimer>
+          <OrderCreation></OrderCreation>
+          <NavBar></NavBar>
       </div>
     );
 }
