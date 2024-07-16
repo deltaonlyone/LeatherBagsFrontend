@@ -1,17 +1,18 @@
-.center {
-    padding: 7vh 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 
 .content {
     justify-content: space-between;
+    flex-wrap: wrap;
     width: 70vw;
 }
 
+.slider {
+    flex-shrink: 0;
+    width: 40%;
+}
+
 .infoText {
-    width: 35vw;
+    flex-shrink: 0;
+    width: 50%;
 }
 
 .titleText {
@@ -49,7 +50,7 @@
     border-radius: 1vw;
     width: 25vw;
     padding: 1vh 2vw;
-    margin-top: 4vh;
+    margin-top: 3vh;
     font-size: 1.5em;
 }
 

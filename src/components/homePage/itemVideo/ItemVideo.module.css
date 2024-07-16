@@ -1,9 +1,9 @@
-.container {
+.videoContainer {
     background-color: var(--secondary-background-color);
     padding: 5vh 0;
 }
 
-.videoContainer {
+.itemVideo {
     width: 70vw;
     border-radius: 2vw;
     margin-top: 5vh;
