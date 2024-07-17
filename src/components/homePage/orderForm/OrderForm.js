@@ -1,6 +1,45 @@
-import styles from './OrderForm.module.css'
+import React, { useState } from 'react';
+import axios from 'axios';
+import styles from './OrderForm.module.css';
 
 const OrderForm = () => {
+    const [city, setCity] = useState('');
+    const [suggestions, setSuggestions] = useState([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+
+    const handleCityChange = async (e) => {
+        const cityName = e.target.value;
+        setCity(cityName);
+
+        if (cityName.length > 2) {
+            try {
+                const response = await axios.post('https://api.novaposhta.ua/v2.0/json/', {
+                    apiKey: 'ad9f19d77f0329680046910f08946c8f',
+                    modelName: 'AddressGeneral',
+                    calledMethod: 'searchSettlements',
+                    methodProperties: {
+                        CityName: cityName,
+                        Limit: '50',
+                        Page: '1'
+                    }
+                });
+
+                setSuggestions(response.data.data[0].Addresses);
+                setShowSuggestions(true);
+            } catch (error) {
+                console.error('Error fetching city data:', error);
+            }
+        } else {
+            setSuggestions([]);
+            setShowSuggestions(false);
+        }
+    };
+
+    const handleCitySelect = (city) => {
+        setCity(city);
+        setSuggestions([]);
+        setShowSuggestions(false);
+    };
 
     return (
         <form className={`column ${styles.orderForm}`}>
@@ -44,7 +83,22 @@ const OrderForm = () => {
             <div className={styles.formRow}>
                 <div className={`${styles.inputColumn} ${styles.oneColumn}`}>
                     <h5>Деталі доставки</h5>
-                    <input type='text' name='city' placeholder='Місто'/>
+                    <input
+                        type='text'
+                        name='city'
+                        placeholder='Місто'
+                        value={city}
+                        onChange={handleCityChange}
+                    />
+                    {showSuggestions && suggestions.length > 0 && (
+                        <ul className={styles.suggestions}>
+                            {suggestions.map((suggestion, index) => (
+                                <li key={index} onClick={() => handleCitySelect(suggestion.Present)}>
+                                    {suggestion.Present}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                     <input type='text' name='department' placeholder='Відділення нової пошти'/>
                 </div>
             </div>
