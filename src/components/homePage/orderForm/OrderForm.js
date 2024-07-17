@@ -4,7 +4,7 @@ import styles from './OrderForm.module.css';
 
 const OrderForm = () => {
     const [city, setCity] = useState('');
-    const [cityShortName, setCityShortName] = useState('');
+    const [cityRef, setCityRef] = useState('');
     const [department, setDepartment] = useState('');
     const [citySuggestions, setCitySuggestions] = useState([]);
     const [departmentSuggestions, setDepartmentSuggestions] = useState([]);
@@ -21,7 +21,6 @@ const OrderForm = () => {
     const handleCityChange = async (e) => {
         const cityName = e.target.value;
         setCity(cityName);
-        setCityShortName(cityName.MainDescription)
         if (cityName.length > 2) {
             try {
                 const response = await axios.post('https://api.novaposhta.ua/v2.0/json/', {
@@ -30,7 +29,7 @@ const OrderForm = () => {
                     calledMethod: 'searchSettlements',
                     methodProperties: {
                         CityName: cityName,
-                        Limit: '5',
+                        Limit: '10',
                         Page: '1',
                         Warehouse: "1"
                     }
@@ -57,14 +56,15 @@ const OrderForm = () => {
                     modelName: 'AddressGeneral',
                     calledMethod: 'getWarehouses',
                     methodProperties: {
-                        // FindByString: departmentNum,
-                        CityName: cityShortName,
+                        WarehouseId: departmentNum,
                         Page: '1',
                         Limit: '20',
-                        Language: 'UA',
-                        WarehouseId: departmentNum
+                        CityRef: cityRef,
+                        Language: 'UA'
+
                     }
                 });
+                console.log(cityRef)
                 setDepartmentSuggestions(response.data.data);
                 setShowDepartmentSuggestions(true);
             } catch (error) {
@@ -78,13 +78,16 @@ const OrderForm = () => {
 
     const handleCitySelect = (selectedCity) => {
         setCity(selectedCity.Present);
-        setCityShortName(selectedCity.MainDescription)
+        setCityRef(selectedCity.DeliveryCity)
+        console.log(selectedCity)
         setCitySuggestions([]);
         setShowCitySuggestions(false);
     };
 
     const handleDepartmentSelect = (selectedDepartment) => {
         setDepartment(selectedDepartment);
+        console.log(selectedDepartment)
+
         setDepartmentSuggestions([]);
         setShowDepartmentSuggestions(false);
     };
