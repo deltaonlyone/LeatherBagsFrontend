@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import styles from './OrderForm.module.css';
 
@@ -6,6 +6,9 @@ const OrderForm = () => {
     const [city, setCity] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const [isFocused, setIsFocused] = useState(false);
+    const [activeSuggestion, setActiveSuggestion] = useState(0);
+    const suggestionsListRef = useRef(null); // Ref для списку автозаповнення
 
     const handleCityChange = async (e) => {
         const cityName = e.target.value;
@@ -19,7 +22,7 @@ const OrderForm = () => {
                     calledMethod: 'searchSettlements',
                     methodProperties: {
                         CityName: cityName,
-                        Limit: '50',
+                        Limit: '5',
                         Page: '1'
                     }
                 });
@@ -35,11 +38,51 @@ const OrderForm = () => {
         }
     };
 
-    const handleCitySelect = (city) => {
-        setCity(city);
+    const handleCitySelect = (selectedCity) => {
+        setCity(selectedCity);
         setSuggestions([]);
         setShowSuggestions(false);
     };
+
+    const handleFocus = () => {
+        setIsFocused(true);
+        setShowSuggestions(true);
+    };
+
+    const handleBlur = () => {
+        setIsFocused(false);
+        setShowSuggestions(false);
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'ArrowDown') {
+            if (activeSuggestion < suggestions.length - 1) {
+                setActiveSuggestion((prev) => prev + 1);
+                scrollToActiveSuggestion();
+            }
+        } else if (e.key === 'ArrowUp') {
+            if (activeSuggestion > 0) {
+                setActiveSuggestion((prev) => prev - 1);
+                scrollToActiveSuggestion();
+            }
+        } else if (e.key === 'Enter') {
+            handleCitySelect(suggestions[activeSuggestion].Present);
+            setActiveSuggestion(0);
+        }
+    };
+
+    const scrollToActiveSuggestion = () => {
+        if (suggestionsListRef.current) {
+            const activeElement = suggestionsListRef.current.querySelector(`.${styles.active}`);
+            if (activeElement) {
+                suggestionsListRef.current.scrollTop = activeElement.offsetTop - suggestionsListRef.current.offsetTop;
+            }
+        }
+    };
+
+    useEffect(() => {
+        scrollToActiveSuggestion();
+    }, [activeSuggestion]);
 
     return (
         <form className={`column ${styles.orderForm}`}>
@@ -89,11 +132,18 @@ const OrderForm = () => {
                         placeholder='Місто'
                         value={city}
                         onChange={handleCityChange}
+                        onFocus={handleFocus}
+                        onBlur={handleBlur}
+                        onKeyDown={handleKeyDown}
                     />
-                    {showSuggestions && suggestions.length > 0 && (
-                        <ul className={styles.suggestions}>
+                    {isFocused && showSuggestions && suggestions.length > 0 && (
+                        <ul className={styles.suggestions} ref={suggestionsListRef}>
                             {suggestions.map((suggestion, index) => (
-                                <li key={index} onClick={() => handleCitySelect(suggestion.Present)}>
+                                <li
+                                    key={index}
+                                    className={index === activeSuggestion ? styles.active : ''}
+                                    onMouseDown={() => handleCitySelect(suggestion.Present)}
+                                >
                                     {suggestion.Present}
                                 </li>
                             ))}
@@ -102,9 +152,10 @@ const OrderForm = () => {
                     <input type='text' name='department' placeholder='Відділення нової пошти'/>
                 </div>
             </div>
+
             <button type='submit'>Замовити</button>
         </form>
-    )
-}
+    );
+};
 
-export default OrderForm
+export default OrderForm;
