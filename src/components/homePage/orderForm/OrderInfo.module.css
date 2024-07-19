@@ -26,8 +26,9 @@
 }
 
 .descriptionContainer > img {
-    width: 30%;
+    width: 25%;
     height: 100%;
     object-fit: contain;
     margin-right: 5%;
+    filter: invert(12%) sepia(9%) saturate(7419%) hue-rotate(349deg) brightness(101%) contrast(95%);
 }

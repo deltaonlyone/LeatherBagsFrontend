@@ -5,7 +5,7 @@ const ItemComments = () => {
     return (
         <div className={styles.wrapper}>
             <div className={styles.imgWrap}>
-                <img src={"comments.png"} alt="bag"/>
+                <img src='/home/comments.png' alt="bag"/>
             </div>
         </div>
     );
