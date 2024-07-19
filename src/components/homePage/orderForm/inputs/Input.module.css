@@ -1,0 +1,139 @@
+.inputColumn {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.inputWrapper {
+    margin-top: 2vh;
+    width: 100%;
+    background-color: var(--input-color);
+    box-sizing: border-box;
+    border-radius: 0.7vw;
+    padding: 0 0.7vw;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.input {
+    width: 100%;
+    border: none;
+    background-color: transparent;
+    padding: 1.2vh 0;
+    font-size: 1em;
+}
+
+.focused {
+    /*border: black 1px solid;*/
+}
+
+.errorWrapper {
+    border: red 1px solid;
+}
+
+.errorInput {
+    width: 80%;
+    margin-right: 5%;
+}
+
+.error {
+    width: 10%;
+    object-fit: contain;
+}
+
+.errorMessage {
+    margin-top: 0.2vh;
+    color: red;
+    font-size: 0.8em;
+    align-self: start;
+    text-align: start;
+}
+
+.inputWrapper > input:focus {
+    outline: none;
+}
+
+.listInput {
+    width: 80%;
+    margin-right: 5%;
+    border: none;
+    background-color: transparent;
+    padding: 1.2vh 0;
+    font-size: 1em;
+}
+
+.unEditable {
+    caret-color: transparent;
+}
+
+.arrow {
+    width: 10%;
+    height: 70%;
+    object-fit: contain;
+    transition: transform 0.5s ease-in-out;
+}
+
+.arrowUp {
+    transform: rotate(180deg);
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown_content {
+    display: none;
+    position: absolute;
+    width: 100%;
+    /*height: fit-content;*/
+    height: 150%;
+    max-height: 150%;
+    box-sizing: border-box;
+    overflow: hidden;
+    z-index: 1;
+    background-color: var(--input-color);
+    border-radius: 0 0 0.7vw 0.7vw;
+}
+
+.scrollable {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    box-sizing: border-box;
+}
+
+.hoveredOption {
+    background-color: var(--main-background-color);
+}
+
+.scrollable::-webkit-scrollbar {
+    width: 10px;
+}
+
+.scrollable::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.scrollable::-webkit-scrollbar-track {
+    background-color: var(--main-background-color);
+}
+
+.dropdown_option {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.5vh 0.7vw;
+    text-align: start;
+    font-size: 1em;
+}
+
+.showContent {
+    display: block;
+    /*border: black 1px solid;*/
+    border-top-width: 0;
+}
+
+.hoveredWrapper {
+    /*border: black 1px solid;*/
+    border-radius: 0.7vw 0.7vw 0 0;
+}

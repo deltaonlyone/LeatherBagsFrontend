@@ -1,9 +1,14 @@
+:root {
+    --form-color: #FFEDDC;
+    --input-color: #E8CBA880;
+}
+
 .orderForm {
     display: flex;
     box-sizing: border-box;
     height: 100%;
     width: 100%;
-    background-color: #FFEDDC;
+    background-color: var(--form-color);
     align-items: center;
     justify-content: center;
     padding: 5%;
@@ -28,10 +33,10 @@
     margin-top: 1.5vh;
 }
 
-.orderForm input, select, fieldset {
-    background-color: #E8CBA880;
+.orderForm select, fieldset {
+    background-color: var(--input-color);
     border: none;
-    padding: 1vh 1vw;
+    padding: 1.2vh 1vw;
     border-radius: 0.7vw;
     font-size: 1em;
 }
@@ -49,6 +54,18 @@
     width: 100%;
 }
 
+.twoColumns {
+    width: 47%;
+}
+
+.oneColumn {
+    width: 100%;
+}
+
+.centeredRow {
+    justify-content: center;
+}
+
 .inputColumn {
     display: flex;
     flex-direction: column;
@@ -56,16 +73,20 @@
     height: 100%;
 }
 
-.inputColumn > input, select, fieldset {
-    margin-top: 1vh;
+.twoColumns > select, fieldset {
+    margin-top: 2vh;
     width: 100%;
     box-sizing: border-box;
 }
 
-.inputColumn > fieldset {
+.twoColumns > fieldset {
     display: flex;
     flex-direction: column;
     align-items: start;
+}
+
+.twoColumns > h5 {
+    text-align: start;
 }
 
 .radioRow {
@@ -83,22 +104,15 @@
     font-size: 1em;
 }
 
-.twoColumns {
-    width: 45%;
-}
-
-.oneColumn {
-    width: 70%;
-}
-
 .orderForm > button[type="submit"] {
     background-color: transparent;
     color: var(--main-text-color);
     font-size: 1.2em;
     padding: 1vh 1vw;
-    margin-top: 2vh;
+    margin-top: 3vh;
     border: var(--main-text-color) 2px solid;
     border-radius: 1vw;
+    width: 70%;
 }
 
 .orderForm > button[type="submit"]:hover {
