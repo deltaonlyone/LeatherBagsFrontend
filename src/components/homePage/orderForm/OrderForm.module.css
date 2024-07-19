@@ -119,3 +119,46 @@
     background-color: transparent;
     color: var(--main-text-color);
 }
+
+.formRow {
+    position: relative;
+}
+
+.inputColumn {
+    position: relative;
+}
+
+.formRow {
+    position: relative;
+}
+
+.inputColumn {
+    position: relative;
+}
+
+.suggestions {
+    position: absolute;
+    top: 70%; /* Розташування нижче поля вводу */
+    left: 0;
+    width: 100%;
+    max-height: 150px; /* Максимальна висота для прокрутки */
+    overflow-y: auto; /* Прокрутка по вертикалі */
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    z-index: 1000; /* Забезпечує, щоб елементи з'являлися поверх інших */
+}
+
+.suggestions li {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.suggestions li:hover,
+.suggestions li.active {
+    background-color: #f0f0f0;
+}
