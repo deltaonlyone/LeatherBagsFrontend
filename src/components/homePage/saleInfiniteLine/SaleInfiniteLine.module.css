@@ -6,7 +6,7 @@
     align-items: center;
 }
 
-p{
+.text{
     color: var(--main-background-color);
     padding: 0 15px;
     font-weight: bold;
