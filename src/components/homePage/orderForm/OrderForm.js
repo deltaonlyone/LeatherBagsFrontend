@@ -39,30 +39,22 @@ const OrderForm = () => {
             phoneNum: phoneNum,
             size: size,
             color: color,
-            city: '1',
-            department: 1
+            city: city,
+            department: department
         })
     };
-  
+
     const [city, setCity] = useState('');
     const [cityRef, setCityRef] = useState('');
     const [department, setDepartment] = useState('');
     const [citySuggestions, setCitySuggestions] = useState([]);
     const [departmentSuggestions, setDepartmentSuggestions] = useState([]);
-    const [showCitySuggestions, setShowCitySuggestions] = useState(false);
-    const [showDepartmentSuggestions, setShowDepartmentSuggestions] = useState(false);
-    const [isCityFocused, setIsCityFocused] = useState(false);
-    const [isDepartmentFocused, setIsDepartmentFocused] = useState(false);
-    const [activeCitySuggestion, setActiveCitySuggestion] = useState(0);
-    const [activeDepartmentSuggestion, setActiveDepartmentSuggestion] = useState(0);
-    const citySuggestionsListRef = useRef(null);
-    const departmentSuggestionsListRef = useRef(null);
 
 
     const handleCityChange = async (e) => {
         const cityName = e.target.value;
         setCity(cityName);
-        if (cityName.length > 2) {
+        if (cityName.length > 0) {
             try {
                 const response = await axios.post('https://api.novaposhta.ua/v2.0/json/', {
                     apiKey: 'ad9f19d77f0329680046910f08946c8f',
@@ -76,21 +68,38 @@ const OrderForm = () => {
                     }
                 });
                 setCitySuggestions(response.data.data[0].Addresses);
-                setShowCitySuggestions(true);
             } catch (error) {
                 console.error('Error fetching city data:', error);
             }
         } else {
             setCitySuggestions([]);
-            setShowCitySuggestions(false);
         }
     };
 
     const handleDepartmentChange = async (e) => {
         const departmentNum = e.target.value;
         setDepartment(departmentNum);
-
-        if (departmentNum.length > 0 && city.length > 0) {
+        try {
+            if(city.length>0){
+            const data = await axios.post('https://api.novaposhta.ua/v2.0/json/', {
+                apiKey: 'ad9f19d77f0329680046910f08946c8f',
+                modelName: 'AddressGeneral',
+                calledMethod: 'searchSettlements',
+                methodProperties: {
+                    Page: '1',
+                    Limit: '1',
+                    CityName: city,
+                    Warehouse: "1"
+                }
+            });
+            setCityRef(data.data.data[0].Addresses[0].DeliveryCity)
+            }else{
+                setCityRef("")
+            }
+        } catch (error) {
+            console.error('Error fetching department data:', error);
+        }
+        if (departmentNum.length > 0) {
             try {
                 const response = await axios.post('https://api.novaposhta.ua/v2.0/json/', {
                     apiKey: 'ad9f19d77f0329680046910f08946c8f',
@@ -105,113 +114,15 @@ const OrderForm = () => {
 
                     }
                 });
-                console.log(cityRef)
+
                 setDepartmentSuggestions(response.data.data);
-                setShowDepartmentSuggestions(true);
             } catch (error) {
                 console.error('Error fetching department data:', error);
             }
         } else {
             setDepartmentSuggestions([]);
-            setShowDepartmentSuggestions(false);
         }
     };
-
-    const handleCitySelect = (selectedCity) => {
-        setCity(selectedCity.Present);
-        setCityRef(selectedCity.DeliveryCity)
-        console.log(selectedCity)
-        setCitySuggestions([]);
-        setShowCitySuggestions(false);
-    };
-
-    const handleDepartmentSelect = (selectedDepartment) => {
-        setDepartment(selectedDepartment);
-        console.log(selectedDepartment)
-
-        setDepartmentSuggestions([]);
-        setShowDepartmentSuggestions(false);
-    };
-
-    const handleCityFocus = () => {
-        setIsCityFocused(true);
-        setShowCitySuggestions(true);
-    };
-
-    const handleCityBlur = () => {
-        setIsCityFocused(false);
-        setShowCitySuggestions(false);
-    };
-
-    const handleDepartmentFocus = () => {
-        setIsDepartmentFocused(true);
-        setShowDepartmentSuggestions(true);
-    };
-
-    const handleDepartmentBlur = () => {
-        setIsDepartmentFocused(false);
-        setShowDepartmentSuggestions(false);
-    };
-
-    const handleCityKeyDown = (e) => {
-        if (e.key === 'ArrowDown') {
-            if (activeCitySuggestion < citySuggestions.length - 1) {
-                setActiveCitySuggestion((prev) => prev + 1);
-                scrollToActiveCitySuggestion();
-            }
-        } else if (e.key === 'ArrowUp') {
-            if (activeCitySuggestion > 0) {
-                setActiveCitySuggestion((prev) => prev - 1);
-                scrollToActiveCitySuggestion();
-            }
-        } else if (e.key === 'Enter') {
-            handleCitySelect(citySuggestions[activeCitySuggestion].Present);
-            setActiveCitySuggestion(0);
-        }
-    };
-
-    const handleDepartmentKeyDown = (e) => {
-        if (e.key === 'ArrowDown') {
-            if (activeDepartmentSuggestion < departmentSuggestions.length - 1) {
-                setActiveDepartmentSuggestion((prev) => prev + 1);
-                scrollToActiveDepartmentSuggestion();
-            }
-        } else if (e.key === 'ArrowUp') {
-            if (activeDepartmentSuggestion > 0) {
-                setActiveDepartmentSuggestion((prev) => prev - 1);
-                scrollToActiveDepartmentSuggestion();
-            }
-        } else if (e.key === 'Enter') {
-            handleDepartmentSelect(departmentSuggestions[activeDepartmentSuggestion].Description);
-            setActiveDepartmentSuggestion(0);
-        }
-    };
-
-    const scrollToActiveCitySuggestion = () => {
-        if (citySuggestionsListRef.current) {
-            const activeElement = citySuggestionsListRef.current.querySelector(`.${styles.active}`);
-            if (activeElement) {
-                citySuggestionsListRef.current.scrollTop = activeElement.offsetTop - citySuggestionsListRef.current.offsetTop;
-            }
-        }
-    };
-
-    const scrollToActiveDepartmentSuggestion = () => {
-        if (departmentSuggestionsListRef.current) {
-            const activeElement = departmentSuggestionsListRef.current.querySelector(`.${styles.active}`);
-            if (activeElement) {
-                departmentSuggestionsListRef.current.scrollTop = activeElement.offsetTop - departmentSuggestionsListRef.current.offsetTop;
-            }
-        }
-    };
-
-    useEffect(() => {
-        scrollToActiveCitySuggestion();
-    }, [activeCitySuggestion]);
-
-    useEffect(() => {
-        scrollToActiveDepartmentSuggestion();
-    }, [activeDepartmentSuggestion]);
 
     return (
         <form className={`column ${styles.orderForm}`}>
@@ -271,59 +182,38 @@ const OrderForm = () => {
                 <div className={styles.twoColumns}>
                     <DropdownList name='color' placeholder='Колір'
                                   value={color} editable={false}
-                                  options={colors} onChange={setColor}
+                                  options={colors} onChange={e => setColor(e.target.value)}
                                   checkErrorTrigger={hasError} setError={checkError}/>
                 </div>
             </div>
             <div className={`${styles.formRow} ${styles.centeredRow}`}>
-                <div className={`${styles.inputColumn} ${styles.oneColumn}`}>
+                <div className={`${styles.inputColumn}`}>
                     <h5>Деталі доставки</h5>
-                    <input
-                        type='text'
-                        name='city'
-                        placeholder='Місто'
-                        value={city}
-                        onChange={handleCityChange}
-                        onFocus={handleCityFocus}
-                        onBlur={handleCityBlur}
-                        onKeyDown={handleCityKeyDown}
-                    />
-                    {isCityFocused && showCitySuggestions && citySuggestions.length > 0 && (
-                        <ul className={styles.suggestions} ref={citySuggestionsListRef}>
-                            {citySuggestions.map((suggestion, index) => (
-                                <li
-                                    key={index}
-                                    className={index === activeCitySuggestion ? styles.active : ''}
-                                    onMouseDown={() => handleCitySelect(suggestion)}
-                                >
-                                    {suggestion.Present}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                    <input
-                        type='text'
-                        name='department'
-                        placeholder='Відділення нової пошти'
-                        value={department}
-                        onChange={handleDepartmentChange}
-                        onFocus={handleDepartmentFocus}
-                        onBlur={handleDepartmentBlur}
-                        onKeyDown={handleDepartmentKeyDown}
-                    />
-                    {isDepartmentFocused && showDepartmentSuggestions && departmentSuggestions.length > 0 && (
-                        <ul className={styles.suggestions} ref={departmentSuggestionsListRef}>
-                            {departmentSuggestions.map((suggestion, index) => (
-                                <li
-                                    key={index}
-                                    className={index === activeDepartmentSuggestion ? styles.active : ''}
-                                    onMouseDown={() => handleDepartmentSelect(suggestion.Description)}
-                                >
-                                    {suggestion.Description}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
+
+                    <div className={styles.oneColumn}>
+                        <DropdownList
+                            name='city'
+                            placeholder='Місто'
+                            value={city}
+                            editable={true}
+                            options={citySuggestions.map(suggestion => suggestion.Present)}
+                            onChange={handleCityChange}
+                            checkErrorTrigger={hasError}
+                            setError={checkError}
+                        />
+                    </div>
+                    <div className={styles.oneColumn}>
+                        <DropdownList
+                            name='department'
+                            placeholder='Відділення нової пошти'
+                            value={department}
+                            editable={true}
+                            options={departmentSuggestions.map(suggestion => suggestion.Description)}
+                            onChange={handleDepartmentChange}
+                            checkErrorTrigger={hasError}
+                            setError={checkError}
+                        />
+                    </div>
                 </div>
             </div>
             <button type='submit' onClick={sendData} disabled={hasError}>Замовити</button>
