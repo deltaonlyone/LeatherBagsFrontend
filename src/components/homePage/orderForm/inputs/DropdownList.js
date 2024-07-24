@@ -1,7 +1,7 @@
 import styles from './Input.module.css';
-import {useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState } from "react";
 
-const DropdownList = ({name, placeholder, value, editable, options, onChange, setError, checkErrorTrigger}) => {
+const DropdownList = ({ name, placeholder, value, editable, options, onChange, setError, checkErrorTrigger }) => {
     const [error, setErrorObject] = useState({
         hasError: false,
         message: ''
@@ -29,7 +29,7 @@ const DropdownList = ({name, placeholder, value, editable, options, onChange, se
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
             event.preventDefault();
-            onChange(options[index]);
+            onChange({ target: { value: options[index] } });
         } else if (event.key === 'ArrowUp' && index > 0) {
             event.preventDefault();
             scrollInView(index - 1);
@@ -88,7 +88,7 @@ const DropdownList = ({name, placeholder, value, editable, options, onChange, se
                         {options.map((c, i) => (
                             <option className={`${styles.dropdown_option} ${i === index ? styles.hoveredOption : ''}`}
                                     value={c} key={i}
-                                    onClick={() => onChange(options[i])}
+                                    onClick={() => onChange({ target: { value: c } })}
                                     onMouseEnter={() => setIndex(i)}>
                                 {c}
                             </option>
@@ -101,4 +101,4 @@ const DropdownList = ({name, placeholder, value, editable, options, onChange, se
     )
 }
 
-export default DropdownList
+export default DropdownList;
