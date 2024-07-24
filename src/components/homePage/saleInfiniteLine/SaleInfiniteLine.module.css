@@ -1,0 +1,15 @@
+.wrapper{
+    background-color: var(--secondary-background-color);
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+p{
+    color: var(--main-background-color);
+    padding: 0 15px;
+    font-weight: bold;
+    font-size: 15px;
+    white-space: nowrap;
+}
