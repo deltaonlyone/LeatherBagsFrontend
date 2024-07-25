@@ -8,6 +8,7 @@ import SaleTimer from "./saleTimer/SaleTimer";
 import ItemInfoLines from "./itemInfoLines/ItemInfoLines";
 import ItemComments from "./itemComments/ItemComments";
 import OrderCreation from "./orderForm/OrderCreation";
+import SaleInfiniteLine from "./saleInfiniteLine/SaleInfiniteLine";
 
 
 const Home = () => {
@@ -17,6 +18,8 @@ const Home = () => {
           <NavBar></NavBar>
           <TopInfo></TopInfo>
           <SaleTimer></SaleTimer>
+          <ItemInfo></ItemInfo>
+          <SaleInfiniteLine></SaleInfiniteLine>
           <ItemInfo></ItemInfo>
           <ItemVideo></ItemVideo>
           <ItemInfoLines></ItemInfoLines>
