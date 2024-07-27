@@ -11,6 +11,10 @@
     --secondary-text-color: #9F5125;
 }
 
+button:hover {
+    cursor: pointer;
+}
+
 .centeredComponent {
     padding: 7vh 0;
     display: flex;

@@ -33,6 +33,7 @@
     margin-top: 1.5vh;
 }
 
+.inputWrapper,
 .orderForm select, fieldset {
     background-color: var(--input-color);
     border: none;
@@ -43,7 +44,11 @@
 
 .orderForm input[type='radio'] {
     accent-color: var(--main-text-color);
-    background-color: transparent;
+    margin-right: 5%;
+}
+
+.orderForm input[type='checkbox'] {
+    accent-color: var(--main-text-color);
     margin-right: 5%;
 }
 
@@ -89,14 +94,23 @@
     text-align: start;
 }
 
-.radioRow {
+.fieldsetRow {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
     display: flex;
     flex-direction: row;
     justify-content: start;
+    align-items: baseline;
     width: 100%;
 }
 
-.radioRow:not(:first-child) {
+.fieldsetRow:hover,
+.fieldsetRow *:hover {
+    cursor: pointer;
+}
+
+.fieldsetRow:not(:first-child) {
     margin-top: 1vh;
 }
 
