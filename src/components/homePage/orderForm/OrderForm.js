@@ -1,17 +1,30 @@
 import styles from './OrderForm.module.css'
-import React, {useCallback, useRef, useState} from 'react';
-import axios from 'axios';
+import React, {useCallback, useState} from 'react';
 import InputPhoneNum from "./inputs/InputPhoneNum";
 import InputName from "./inputs/InputName";
 import DropdownList from "./inputs/DropdownList";
-
-const pageLimit = 15;
+import DeliveryInputs from "./DeliveryInputs";
 
 const OrderForm = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [middleName, setMiddleName] = useState('');
     const [phoneNum, setPhoneNum] = useState('+380');
+
+    const types = [{
+        title: 'Сумка бананка з натуральної шкіри',
+        value: 'Сумка бананка з натуральної шкіри'
+    }, {
+        title: 'Сумка бананка з натуральної шкіри з срібним замком',
+        value: 'Сумка бананка з натуральної шкіри з срібним замком'
+    }];
+    const [type, setType] = useState(types[0]);
+    const handleTypeChange = (e) => {
+        setType({
+            title: e.title,
+            value: e.title
+        });
+    }
 
     const sizes = [{
         value: 'L',
@@ -44,12 +57,21 @@ const OrderForm = () => {
     }
 
     const [keyHolder, setKeyHolder] = useState(true);
+    const [city, setCity] = useState({
+        title: '',
+        value: null
+    });
+    const [department, setDepartment] = useState({
+        title: '',
+        value: null
+    });
+
 
     const [hasError, setHasError] = useState(false);
     const [trigger, setTrigger] = useState(false);
     const checkError = useCallback((error) => {
         setHasError(hasError || error);
-    }, [hasError])
+    }, [hasError]);
 
     const sendData = (event) => {
         event.preventDefault();
@@ -59,6 +81,7 @@ const OrderForm = () => {
             lastName: lastName,
             middleName: middleName,
             phoneNum: phoneNum,
+            type: type,
             size: size,
             color: color.value,
             keyHolder: keyHolder,
@@ -66,130 +89,6 @@ const OrderForm = () => {
             department: department.value
         })
     };
-
-    const [city, setCity] = useState({
-        title: '',
-        value: null
-    });
-    const [citySuggestions, setCitySuggestions] = useState([]);
-    let cityPage = useRef(1);
-    let cityHasNext = useRef(true);
-
-    const loadCitySuggestions = useCallback(async (cityName, refresh) => {
-        if (refresh) {
-            cityPage.current = 1;
-            cityHasNext.current = true;
-        } else if (cityHasNext.current) {
-            cityPage.current++;
-        } else {
-            return;
-        }
-        if (cityName) {
-            try {
-                const response = await axios.post('https://api.novaposhta.ua/v2.0/json/', {
-                    apiKey: 'ad9f19d77f0329680046910f08946c8f',
-                    modelName: 'AddressGeneral',
-                    calledMethod: 'searchSettlements',
-                    methodProperties: {
-                        CityName: cityName,
-                        Limit: pageLimit,
-                        Page: cityPage.current,
-                        Warehouse: 1
-                    }
-                });
-                setCitySuggestions([...(refresh ? [] : citySuggestions),
-                    ...response.data.data[0].Addresses.map(v => {
-                        return {
-                            title: v.Present,
-                            value: v.DeliveryCity
-                        }
-                    })]);
-                cityHasNext.current = response.data.data[0].TotalCount > pageLimit * cityPage.current;
-            } catch (error) {
-                console.error('Error fetching city data:', error);
-            }
-        } else {
-            setCitySuggestions([]);
-        }
-    }, [citySuggestions]);
-
-    const handleCityChange = useCallback(async (e) => {
-        if (city.title !== e.title) {
-            setCity({
-                title: e.title,
-                value: e.value
-            });
-        }
-        await loadCitySuggestions(e.title, true);
-    }, [loadCitySuggestions, city.title]);
-
-    const handleCityScrollDown = useCallback(() => {
-        loadCitySuggestions(city.title, false);
-    }, [loadCitySuggestions, city.title]);
-
-    const [department, setDepartment] = useState({
-        title: '',
-        value: null
-    });
-    const [departmentSuggestions, setDepartmentSuggestions] = useState([]);
-    let departmentPage = useRef(1);
-    let departmentHasNext = useRef(true);
-
-    const loadDepartmentSuggestions = useCallback(async (departmentNum, refresh) => {
-        if (refresh) {
-            departmentPage.current = 1;
-            departmentHasNext.current = true;
-        } else if (departmentHasNext.current) {
-            departmentPage.current++;
-        } else {
-            return;
-        }
-
-        if (city.value) {
-            try {
-                const properties = {
-                    Page: departmentPage.current,
-                    Limit: pageLimit,
-                    CityRef: city.value,
-                    Language: 'UA'
-                };
-                if (departmentNum) {
-                    properties.WarehouseId = departmentNum;
-                }
-
-                const response = await axios.post('https://api.novaposhta.ua/v2.0/json/', {
-                    apiKey: 'ad9f19d77f0329680046910f08946c8f',
-                    modelName: 'AddressGeneral',
-                    calledMethod: 'getWarehouses',
-                    methodProperties: properties
-                });
-
-                setDepartmentSuggestions([...(refresh ? [] : departmentSuggestions),
-                    ...response.data.data.map(v => {
-                        return {
-                            title: v.Description,
-                            value: v.Description
-                        }
-                    })]);
-                departmentHasNext.current = response.data.info.totalCount > pageLimit * departmentPage.current;
-            } catch (error) {
-                console.error('Error fetching department data:', error);
-            }
-        } else {
-            setDepartmentSuggestions([]);
-        }
-    }, [city.value, departmentSuggestions]);
-
-    const handleDepartmentChange = useCallback(async (e) => {
-        if (department.title !== e.title) {
-            setDepartment(e);
-        }
-        await loadDepartmentSuggestions(e.title, true);
-    }, [loadDepartmentSuggestions, department.title]);
-
-    const handleDepartmentScrollDown = useCallback(() => {
-        loadDepartmentSuggestions(department.title, false);
-    }, [loadDepartmentSuggestions, department.title]);
 
     return (
         <form className={`column ${styles.orderForm}`}>
@@ -225,6 +124,18 @@ const OrderForm = () => {
                 </div>
             </div>
             <div className={styles.formRow}>
+                <h5>Оберіть вид сумки</h5>
+            </div>
+            <div className={styles.formRow}>
+                <div className={styles.oneColumn}>
+                    <DropdownList name='type' placeholder='Тип cумки'
+                                  value={type} editable={false}
+                                  options={types} onChange={handleTypeChange}
+                                  checkErrorTrigger={hasError} setError={checkError}
+                    />
+                </div>
+            </div>
+            <div className={styles.formRow}>
                 <div className={styles.twoColumns}>
                     <h5>Оберіть розмір</h5>
                 </div>
@@ -251,7 +162,8 @@ const OrderForm = () => {
                         <DropdownList name='fill' placeholder='Колір'
                                       value={color} editable={false}
                                       options={colors} onChange={handleColorChange}
-                                      checkErrorTrigger={hasError} setError={checkError}/>
+                                      checkErrorTrigger={hasError} setError={checkError}
+                        />
                         <div className={styles.inputWrapper}>
                             <div className={styles.fieldsetRow}
                                  onClick={() => setKeyHolder(!keyHolder)}>
@@ -264,34 +176,9 @@ const OrderForm = () => {
                     </div>
                 </div>
             </div>
-            <div className={`${styles.formRow} ${styles.centeredRow}`}>
-                <div className={`${styles.inputColumn} ${styles.oneColumn}`}>
-                    <h5>Деталі доставки</h5>
-                    <DropdownList
-                        name='place'
-                        placeholder='Місто'
-                        value={city}
-                        editable={true}
-                        options={citySuggestions}
-                        onChange={handleCityChange}
-                        onScrollDown={handleCityScrollDown}
-                        checkErrorTrigger={hasError}
-                        setError={checkError}
-                    />
-                    <DropdownList
-                        name='department'
-                        placeholder='Відділення нової пошти'
-                        value={department}
-                        editable={true}
-                        options={departmentSuggestions}
-                        onChange={handleDepartmentChange}
-                        onScrollDown={handleDepartmentScrollDown}
-                        checkErrorTrigger={hasError}
-                        setError={checkError}
-                        disabled={!city.value}
-                    />
-                </div>
-            </div>
+            <DeliveryInputs hasError={hasError} checkError={checkError}
+                            city={city} setCity={setCity}
+                            department={department} setDepartment={setDepartment}/>
             <button type='submit' onClick={sendData} disabled={hasError}>Замовити</button>
         </form>
     );

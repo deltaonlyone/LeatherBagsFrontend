@@ -35,13 +35,16 @@ const DropdownList = ({
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
             event.preventDefault();
+            event.stopPropagation();
             onChange(options[index]);
         } else if (event.key === 'ArrowUp' && index > 0) {
             event.preventDefault();
+            event.stopPropagation();
             scrollInView(index - 1);
             setIndex(index - 1);
         } else if (event.key === 'ArrowDown' && index < options.length - 1) {
             event.preventDefault();
+            event.stopPropagation();
             scrollInView(index + 1);
             setIndex(index + 1);
         }
@@ -129,7 +132,9 @@ const DropdownList = ({
                         {options.map((c, i) => (
                             <option className={`${styles.dropdown_option} ${i === index ? styles.hoveredOption : ''}`}
                                     value={c.title} key={i}
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
                                         onChange({
                                             title: c.title,
                                             value: c.value
