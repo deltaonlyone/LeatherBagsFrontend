@@ -1,7 +1,12 @@
 import styles from './Input.module.css';
-import { useEffect, useRef, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 
-const DropdownList = ({ name, placeholder, value, editable, options, onChange, setError, checkErrorTrigger }) => {
+const DropdownList = ({
+                          name, placeholder, value,
+                          editable, options, onChange,
+                          setError, checkErrorTrigger,
+                          disabled, onScrollDown
+                      }) => {
     const [error, setErrorObject] = useState({
         hasError: false,
         message: ''
@@ -10,7 +15,7 @@ const DropdownList = ({ name, placeholder, value, editable, options, onChange, s
     const [hovered, setHovered] = useState(false);
     const [focused, setFocused] = useState(false);
     const isShown = () => {
-        return hovered || focused;
+        return !disabled && (hovered || focused);
     }
 
     const [index, setIndex] = useState(0);
@@ -26,23 +31,27 @@ const DropdownList = ({ name, placeholder, value, editable, options, onChange, s
             }
         }
     }
+
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
             event.preventDefault();
-            onChange({ target: { value: options[index] } });
+            event.stopPropagation();
+            onChange(options[index]);
         } else if (event.key === 'ArrowUp' && index > 0) {
             event.preventDefault();
+            event.stopPropagation();
             scrollInView(index - 1);
             setIndex(index - 1);
         } else if (event.key === 'ArrowDown' && index < options.length - 1) {
             event.preventDefault();
+            event.stopPropagation();
             scrollInView(index + 1);
             setIndex(index + 1);
         }
     }
 
     const checkError = () => {
-        if (!value) {
+        if (value.value === null) {
             setErrorObject({
                 hasError: true,
                 message: "Поле є обов'язковим"
@@ -63,34 +72,77 @@ const DropdownList = ({ name, placeholder, value, editable, options, onChange, s
         }
     }, [checkErrorTrigger]);
 
+    const input = useRef();
+    const onWrapperClick = () => {
+        if (input.current) {
+            input.current.focus();
+        }
+    }
+
+    const onScroll = (e) => {
+        const element = e.target;
+        if (Math.abs(element.scrollHeight - (element.scrollTop + element.clientHeight)) <= 1) {
+            onScrollDown();
+        }
+    }
+
     return (
         <div className={styles.inputColumn}>
             <div className={styles.dropdown}
                  onKeyDown={handleKeyDown}
                  onMouseEnter={() => setHovered(true)}
-                 onMouseLeave={() => setHovered(false)}>
+                 onMouseLeave={() => setHovered(false)}
+                 onClick={onWrapperClick}>
                 <div
-                    className={`row ${styles.inputWrapper} 
-                        ${error.hasError ? styles.errorWrapper : ''}
-                        ${isShown() ? styles.hoveredWrapper : ''}`}>
+                    className={`row ${styles.inputWrapper}
+                        ${error.hasError ? isShown() ? styles.dropdownErrorWrapper : styles.errorWrapper : ''}
+                        ${isShown() ? styles.hoveredWrapper : ''}
+                        ${disabled ? styles.disabledWrapper : ''}`}>
                     <input type='text' name={name}
                            className={`${styles.listInput} ${editable ? '' : styles.unEditable}`}
-                           onChange={onChange} value={value}
-                           onFocus={() => setFocused(true)}
-                           onBlur={() => setFocused(false)}
+                           onChange={(e) => onChange({
+                               title: e.target.value,
+                               value: null
+                           })}
+                           value={value.title}
+                           onFocus={(e) => {
+                               setFocused(true);
+                               onChange({
+                                   title: e.target.value,
+                                   value: null
+                               });
+                           }}
+                           onBlur={() => {
+                               setFocused(false);
+                               checkError();
+                           }}
                            placeholder={placeholder}
-                           contentEditable={editable}/>
+                           ref={input}
+                           autoComplete='off'
+                           readOnly={!editable || disabled}/>
                     <img src='/home/arrow.png' alt='arrow'
                          className={`${styles.arrow} ${isShown() ? styles.arrowUp : ''}`}/>
                 </div>
-                <div className={`${styles.dropdown_content} ${isShown() ? styles.showContent : ''}`}>
-                    <div className={styles.scrollable} ref={scrollableRef}>
+                <div className={`${styles.dropdown_content}
+                 ${isShown() ? styles.showContent : ''}
+                 ${error.hasError ? styles.dropdownError : ''}`}>
+                    <div className={styles.scrollable} ref={scrollableRef}
+                         onScroll={onScrollDown ? onScroll : () => {
+                         }}>
                         {options.map((c, i) => (
                             <option className={`${styles.dropdown_option} ${i === index ? styles.hoveredOption : ''}`}
-                                    value={c} key={i}
-                                    onClick={() => onChange({ target: { value: c } })}
+                                    value={c.title} key={i}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        onChange({
+                                            title: c.title,
+                                            value: c.value
+                                        });
+                                        checkError();
+                                    }}
                                     onMouseEnter={() => setIndex(i)}>
-                                {c}
+                                {c.title}
                             </option>
                         ))}
                     </div>
