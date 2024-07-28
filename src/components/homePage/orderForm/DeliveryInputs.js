@@ -122,11 +122,12 @@ const DeliveryInputs = ({hasError, checkError, city, setCity, department, setDep
         loadDepartmentSuggestions(department.title, false);
     }, [loadDepartmentSuggestions, department.title]);
 
-
     return (
-        <div className={`${styles.formRow} ${styles.centeredRow}`}>
-            <div className={`${styles.inputColumn} ${styles.oneColumn}`}>
+        <div className={`column ${styles.oneColumn}  ${styles.centeredRow}`}>
+            <div className={`${styles.formRow}`}>
                 <h5>Деталі доставки</h5>
+            </div>
+            <div className={`${styles.formRow} ${styles.inputRow}`}>
                 <DropdownList
                     name='place'
                     placeholder='Місто'
@@ -138,6 +139,8 @@ const DeliveryInputs = ({hasError, checkError, city, setCity, department, setDep
                     checkErrorTrigger={hasError}
                     setError={checkError}
                 />
+            </div>
+            <div className={`${styles.formRow} ${styles.inputRow}`}>
                 <DropdownList
                     name='department'
                     placeholder='Відділення нової пошти'

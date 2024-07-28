@@ -1,5 +1,4 @@
 .inputColumn {
-    margin-top: 2vh;
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -9,6 +8,7 @@
     width: 100%;
     background-color: var(--input-color);
     box-sizing: border-box;
+    border: 1px var(--input-color) solid;
     border-radius: 0.7vw;
     padding: 0 0.7vw;
     align-items: center;
@@ -46,7 +46,7 @@
 }
 
 .errorInput {
-    width: 80%;
+    width: 100%;
     margin-right: 5%;
 }
 
@@ -70,8 +70,8 @@
 .listInput {
     width: 100%;
     margin-right: 5%;
-    border: none;
     background-color: transparent;
+    border: none;
     padding: 1.2vh 0;
     font-size: 1em;
 }
@@ -104,6 +104,8 @@
     overflow: auto;
     z-index: 1;
     background-color: var(--input-color);
+    border: 1px var(--input-color) solid;
+    border-top: none;
     border-radius: 0 0 0.7vw 0.7vw;
 }
 
@@ -148,6 +150,6 @@
 }
 
 .hoveredWrapper {
-    /*border: black 1px solid;*/
+    border-bottom: 0;
     border-radius: 0.7vw 0.7vw 0 0;
 }

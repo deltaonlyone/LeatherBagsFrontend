@@ -97,7 +97,7 @@ const OrderForm = () => {
             <div className={styles.formRow}>
                 <h5>Ваші персональні дані</h5>
             </div>
-            <div className={styles.formRow}>
+            <div className={`${styles.formRow} ${styles.inputRow}`}>
                 <div className={styles.twoColumns}>
                     <InputName name='firstName' placeholder="Ім'я"
                                value={firstName} setValue={setFirstName}
@@ -111,7 +111,7 @@ const OrderForm = () => {
                                setError={checkError}/>
                 </div>
             </div>
-            <div className={styles.formRow}>
+            <div className={`${styles.formRow} ${styles.inputRow}`}>
                 <div className={styles.twoColumns}>
                     <InputName name='middleName' placeholder='По батькові'
                                value={middleName} setValue={setMiddleName}
@@ -126,7 +126,7 @@ const OrderForm = () => {
             <div className={styles.formRow}>
                 <h5>Оберіть вид сумки</h5>
             </div>
-            <div className={styles.formRow}>
+            <div className={`${styles.formRow} ${styles.inputRow}`}>
                 <div className={styles.oneColumn}>
                     <DropdownList name='type' placeholder='Тип cумки'
                                   value={type} editable={false}
@@ -143,7 +143,7 @@ const OrderForm = () => {
                     <h5>Оберіть колір</h5>
                 </div>
             </div>
-            <div className={styles.formRow}>
+            <div className={`${styles.formRow} ${styles.inputRow}`}>
                 <div className={styles.twoColumns}>
                     <fieldset>
                         {sizes.map((s, i) => (

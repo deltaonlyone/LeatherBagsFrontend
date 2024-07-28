@@ -56,7 +56,12 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: start;
     width: 100%;
+}
+
+.inputRow {
+    margin-top: 2vh;
 }
 
 .twoColumns {
@@ -78,8 +83,7 @@
     height: 100%;
 }
 
-.twoColumns > select, fieldset {
-    margin-top: 2vh;
+.twoColumns > fieldset {
     width: 100%;
     box-sizing: border-box;
 }

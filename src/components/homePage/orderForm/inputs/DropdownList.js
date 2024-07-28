@@ -51,7 +51,7 @@ const DropdownList = ({
     }
 
     const checkError = () => {
-        if (!value.value) {
+        if (value.value === null) {
             setErrorObject({
                 hasError: true,
                 message: "Поле є обов'язковим"
@@ -94,7 +94,7 @@ const DropdownList = ({
                  onMouseLeave={() => setHovered(false)}
                  onClick={onWrapperClick}>
                 <div
-                    className={`row ${styles.inputWrapper} 
+                    className={`row ${styles.inputWrapper}
                         ${error.hasError ? isShown() ? styles.dropdownErrorWrapper : styles.errorWrapper : ''}
                         ${isShown() ? styles.hoveredWrapper : ''}
                         ${disabled ? styles.disabledWrapper : ''}`}>
