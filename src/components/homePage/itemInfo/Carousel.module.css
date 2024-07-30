@@ -32,6 +32,10 @@
     top: 43%;
 }
 
+.arrow:hover {
+    cursor: pointer;
+}
+
 .arrowLeft {
     left: 0;
     rotate: 90deg;
