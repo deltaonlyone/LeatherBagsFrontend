@@ -1,8 +1,7 @@
 .feature {
     align-items: center;
     margin-bottom: 1vh;
-    min-height: 2.5em;
-    max-height: 3vh;
+    padding: 0.3vh 0;
 }
 
 .text {

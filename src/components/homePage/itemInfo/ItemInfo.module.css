@@ -41,6 +41,10 @@
     padding-left: 2vw;
 }
 
+.optionList{
+    display: flex;
+}
+
 .orderButton {
     background-color: var(--secondary-background-color);
     color: var(--main-background-color);
@@ -64,5 +68,38 @@
 }
 
 @media (max-width: 768px) {
+    .content {
+        flex-wrap: wrap;
+        width: 100%;
+        display: flex;
+        align-content: center;
+        padding: 0 25px;
+    }
+
+    .optionList {
+        width: 100%;
+        margin-bottom: 2vh;
+    }
+
+    .option {
+        width: 60%;
+    }
+
+    .slider {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        width: 90%;
+    }
+
+    .infoText {
+        padding-top: 25px;
+        flex-shrink: 0;
+        width: 100%;
+    }
+
+    .orderButton {
+        width: 70%;
+    }
 
 }
