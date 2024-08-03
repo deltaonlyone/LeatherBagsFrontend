@@ -71,7 +71,7 @@ const ItemInfo = () => {
                         <p className={style.oldPrice}>10000₴</p>
                         <p className={style.newPrice}>15000₴</p>
                     </div>
-                    <div className={`column`}>
+                    <div className={`column ${style.optionList}`}>
                         <div className={style.option}>
                             <DropdownList name='fill' placeholder='Колір'
                                           value={color} editable={false}
