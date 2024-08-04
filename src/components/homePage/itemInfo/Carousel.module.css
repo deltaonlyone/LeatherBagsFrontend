@@ -72,8 +72,8 @@
     box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
 }
 
-.cover:not(:first-child) {
-    margin-left: 5%;
+.cover:not(:last-child) {
+    margin-right: 5%;
 }
 
 .cover > img {
@@ -87,8 +87,8 @@
         width: 20%;
     }
 
-    .cover:not(:first-child) {
-        margin-left: 6%;
+    .cover:not(:last-child) {
+        margin-right: 6%;
     }
 
     .ratio120 {
