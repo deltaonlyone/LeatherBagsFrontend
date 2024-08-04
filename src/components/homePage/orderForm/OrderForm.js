@@ -76,7 +76,7 @@ const OrderForm = ({pType, pSize, pColor, pKeyHolder}) => {
     };
 
     useEffect(() => {
-        console.log(errors)
+        // console.log(errors)
     }, [errors, submitting]);
 
     return (
