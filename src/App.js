@@ -5,11 +5,7 @@ import Home from "./components/homePage/Home";
 import Login from "./components/logginPage/Login";
 import Order from "./components/orderPage/Order";
 
-import {
-    BrowserRouter as Router,
-    Routes,
-    Route
-} from "react-router-dom";
+import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 
 function App() {
   return (

@@ -24,20 +24,20 @@ const OrderForm = ({pType, pSize, pColor, pKeyHolder}) => {
     const [colors, setColors] = useState(colorOptions(type.value, size.value));
     const [color, setColor] = useState(pColor ? pColor : colors[0]);
 
-    const [keyHolderStates, setKeyHoldersStates] = useState( keyHolderOptions());
+    const [keyHolderStates, setKeyHoldersStates] = useState(keyHolderOptions());
     const [keyHolder, setKeyHolder] = useState(pKeyHolder ? pKeyHolder : keyHolderStates[0]);
 
     useEffect(() => {
         const sizes = sizeOptions(type.value);
         setSizes(sizes);
         setSize(sizes[0]);
-    }, [type])
+    }, [type.value]);
 
     useEffect(() => {
         const colors = colorOptions(type.value, size.value);
         setColors(colors);
         setColor(colors[0]);
-    }, [type, size]);
+    }, [type.value, size.value]);
 
     const [city, setCity] = useState({
         title: '',

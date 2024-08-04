@@ -8,7 +8,7 @@ import handleBasicChange from "../orderForm/inputs/HandleChanges";
 import {bagPrice, bagPriceFull} from "../bagsInfo/BagsPrices";
 
 const ItemInfo = ({type, images, features}) => {
-    const [sizes, setSizes] = useState(sizeOptions(type));
+    const sizes = sizeOptions(type);
     const [size, setSize] = useState(sizes[0]);
 
     const [colors, setColors] = useState(colorOptions(type, size.value));
@@ -18,8 +18,10 @@ const ItemInfo = ({type, images, features}) => {
     const [keyHolder, setKeyHolder] = useState(keyHolderStates[0]);
 
     useEffect(() => {
-
-    }, []);
+        const colors = colorOptions(type, size.value);
+        setColors(colors);
+        setColor(colors[0]);
+    }, [size.value]);
 
     return (
         <div className={'centeredComponent'}>

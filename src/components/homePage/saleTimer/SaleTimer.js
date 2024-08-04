@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from './SaleTimer.module.css';
-import InfiniteLoop from "../itemVideo/InfiniteLooper";
 
 const SaleTimer = () => {
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
