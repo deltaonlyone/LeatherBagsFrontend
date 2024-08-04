@@ -39,3 +39,9 @@ button:hover {
 .hidden {
     display: none;
 }
+
+.nonDraggable {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
