@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import style from './Carousel.module.css';
 import styled from 'styled-components';
 
@@ -30,12 +30,16 @@ const SmallSlider = styled.div.withConfig({
 const Carousel = (props) => {
     const [index, setIndex] = useState(0);
     const [xPosition, setXPosition] = useState(0);
+    const calculateXPosition = useCallback((index) => {
+        return Math.min(0, Math.max(
+            -(index - 1) * smallImageWidth.current, maxSmallOffset.current));
+    }, [])
 
     const smallSlider = useRef();
     const smallSliderImages = useRef([]);
     const maxSmallOffset = useRef(0);
     const smallImageWidth = useRef(0);
-    useEffect(() => {
+    const calculateSliderSize = useCallback(() => {
         if (!smallSlider.current && smallImageWidth.current
             && smallImageWidth.current.length > 2) {
             return
@@ -49,19 +53,19 @@ const Carousel = (props) => {
 
         smallImageWidth.current = secondLeft - firstLeft;
         let imagesWidth = lastRight - firstLeft;
-
         maxSmallOffset.current = smallSlider.current.offsetWidth - imagesWidth;
-        console.log(imagesWidth)
-        console.log(smallSlider.current.offsetWidth);
+
+        setXPosition(calculateXPosition(index));
+    }, [calculateXPosition, index]);
+
+    useEffect(() => {
+        calculateSliderSize();
+        window.addEventListener('resize', calculateSliderSize);
     }, []);
 
     const setIndexAndPosition = (newIndex) => {
         setIndex(newIndex);
-        setXPosition(Math.min(0, Math.max(
-            -(newIndex - 1) * smallImageWidth.current, maxSmallOffset.current)));
-        console.log(-(newIndex - 1) * smallImageWidth.current)
-        console.log(maxSmallOffset.current)
-        console.log()
+        setXPosition(calculateXPosition(newIndex));
     };
 
     const handleClickPrev = () => {
