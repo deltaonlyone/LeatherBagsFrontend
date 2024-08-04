@@ -5,7 +5,10 @@ import DropdownList from "./inputs/DropdownList";
 
 const pageLimit = 15;
 
-const DeliveryInputs = ({hasError, checkError, city, setCity, department, setDepartment}) => {
+const DeliveryInputs = ({city, setCity,
+                            department, setDepartment,
+                            setPrice,
+                            errors, setErrors, submitting}) => {
     const [citySuggestions, setCitySuggestions] = useState([]);
     let cityPage = useRef(1);
     let cityHasNext = useRef(true);
@@ -28,8 +31,7 @@ const DeliveryInputs = ({hasError, checkError, city, setCity, department, setDep
                     methodProperties: {
                         CityName: cityName,
                         Limit: pageLimit,
-                        Page: cityPage.current,
-                        Warehouse: 1
+                        Page: cityPage.current
                     }
                 });
                 setCitySuggestions([...(refresh ? [] : citySuggestions),
@@ -39,6 +41,7 @@ const DeliveryInputs = ({hasError, checkError, city, setCity, department, setDep
                             value: v.DeliveryCity
                         }
                     })]);
+
                 cityHasNext.current = response.data.data[0].TotalCount > pageLimit * cityPage.current;
             } catch (error) {
                 console.error('Error fetching city data:', error);
@@ -47,6 +50,23 @@ const DeliveryInputs = ({hasError, checkError, city, setCity, department, setDep
             setCitySuggestions([]);
         }
     }, [citySuggestions]);
+    const checkPrice = useCallback(async (cityRef) => {
+        const response = await axios.post('https://api.novaposhta.ua/v2.0/json/', {
+            apiKey: 'ad9f19d77f0329680046910f08946c8f',
+            modelName: "InternetDocumentGeneral",
+            calledMethod: "getDocumentPrice",
+            methodProperties: {
+                CitySender: "e71abb60-4b33-11e4-ab6d-005056801329",
+                CityRecipient: cityRef,
+                Weight: "1",
+                ServiceType: "WarehouseWarehouse",
+                Cost: "1000",
+                CargoType: "Cargo",
+                SeatsAmount: "1"
+            }
+        });
+        setPrice(response.data.data[0].Cost);
+    }, [setPrice])
 
     const handleCityChange = useCallback(async (e) => {
         if (city.title !== e.title) {
@@ -56,7 +76,10 @@ const DeliveryInputs = ({hasError, checkError, city, setCity, department, setDep
             });
         }
         await loadCitySuggestions(e.title, true);
-    }, [loadCitySuggestions, city.title, setCity]);
+        if (e.value) {
+            await checkPrice(e.value);
+        }
+    }, [loadCitySuggestions, city.title, setCity, checkPrice]);
 
     const handleCityScrollDown = useCallback(() => {
         loadCitySuggestions(city.title, false);
@@ -66,7 +89,7 @@ const DeliveryInputs = ({hasError, checkError, city, setCity, department, setDep
     let departmentPage = useRef(1);
     let departmentHasNext = useRef(true);
 
-    const loadDepartmentSuggestions = useCallback(async (departmentNum, refresh) => {
+    const loadDepartmentSuggestions = useCallback(async (departmentName, refresh) => {
         if (refresh) {
             departmentPage.current = 1;
             departmentHasNext.current = true;
@@ -83,9 +106,9 @@ const DeliveryInputs = ({hasError, checkError, city, setCity, department, setDep
                     Limit: pageLimit,
                     CityRef: city.value,
                     Language: 'UA'
-                };
-                if (departmentNum) {
-                    properties.WarehouseId = departmentNum;
+                }
+                if (departmentName) {
+                    properties.FindByString = departmentName;
                 }
 
                 const response = await axios.post('https://api.novaposhta.ua/v2.0/json/', {
@@ -119,7 +142,8 @@ const DeliveryInputs = ({hasError, checkError, city, setCity, department, setDep
     }, [loadDepartmentSuggestions, department.title, setDepartment]);
 
     const handleDepartmentScrollDown = useCallback(() => {
-        loadDepartmentSuggestions(department.title, false);
+        loadDepartmentSuggestions(department.title, false)
+            .then();
     }, [loadDepartmentSuggestions, department.title]);
 
     return (
@@ -136,8 +160,9 @@ const DeliveryInputs = ({hasError, checkError, city, setCity, department, setDep
                     options={citySuggestions}
                     onChange={handleCityChange}
                     onScrollDown={handleCityScrollDown}
-                    checkErrorTrigger={hasError}
-                    setError={checkError}
+                    errors={errors}
+                    setErrors={setErrors}
+                    submitting={submitting}
                 />
             </div>
             <div className={`${styles.formRow} ${styles.inputRow}`}>
@@ -149,8 +174,9 @@ const DeliveryInputs = ({hasError, checkError, city, setCity, department, setDep
                     options={departmentSuggestions}
                     onChange={handleDepartmentChange}
                     onScrollDown={handleDepartmentScrollDown}
-                    checkErrorTrigger={hasError}
-                    setError={checkError}
+                    errors={errors}
+                    setErrors={setErrors}
+                    submitting={submitting}
                     disabled={!city.value}
                 />
             </div>

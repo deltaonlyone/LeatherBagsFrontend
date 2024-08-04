@@ -2,104 +2,60 @@ import style from './ItemInfo.module.css';
 import Carousel from "./Carousel";
 import ItemFeature from "./ItemFeature";
 import DropdownList from "../orderForm/inputs/DropdownList";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
+import {colorOptions, keyHolderOptions, sizeOptions} from "../bagsInfo/BagsOptions";
+import handleBasicChange from "../orderForm/inputs/HandleChanges";
+import {bagPrice, bagPriceFull} from "../bagsInfo/BagsPrices";
 
-const ItemInfo = () => {
-    const colors = [{
-        title: 'Чорний',
-        value: 'Чорний'
-    }, {
-        title: 'Синій',
-        value: 'Синій'
-    }, {
-        title: 'Червоний',
-        value: 'Червоний'
-    }, {
-        title: 'Коричневий',
-        value: 'Коричневий'
-    }];
-    const [color, setColor] = useState(colors[0]);
-    const handleColorChange = (e) => {
-        setColor({
-            title: e.title,
-            value: e.value
-        });
-    }
-
-    const sizes = [{
-        title: 'Стандартний L',
-        value: 'L'
-    }, {
-        title: 'Великий XL',
-        value: 'XL'
-    }];
+const ItemInfo = ({type, images, features}) => {
+    const [sizes, setSizes] = useState(sizeOptions(type));
     const [size, setSize] = useState(sizes[0]);
-    const handleSizeChange = (e) => {
-        setSize({
-            title: e.title,
-            value: e.value
-        });
-    }
 
-    const keyHolders = [{
-        title: 'З ключницею',
-        value: true
-    }, {
-        title: 'Без ключниці',
-        value: false
-    }];
-    const [keyHolder, setKeyHolder] = useState(keyHolders[0]);
-    const handleKeyHolderChange = (e) => {
-        setKeyHolder({
-            title: e.title,
-            value: e.value
-        });
-    }
+    const [colors, setColors] = useState(colorOptions(type, size.value));
+    const [color, setColor] = useState(colors[0]);
+
+    const keyHolderStates = keyHolderOptions();
+    const [keyHolder, setKeyHolder] = useState(keyHolderStates[0]);
+
+    useEffect(() => {
+
+    }, []);
 
     return (
         <div className={'centeredComponent'}>
             <div className={`row ${style.content}`}>
                 <div className={style.slider}>
                     <Carousel mainWidth='30vw' mainHeight='60vh'
-                              images={['/home/mainImage.webp',
-                                  '/home/img2.webp', '/home/mainImage.webp',
-                                  '/home/mainImage.webp', '/home/mainImage.webp']}/>
+                              images={images}/>
                 </div>
                 <div className={`column ${style.infoText}`}>
                     <h3 className={style.titleText}>СУМКА БАНАНКА З НАТУРАЛЬНОЇ ШКІРИ РОЗМІР L або XL!</h3>
                     <div className={`row ${style.price}`}>
-                        <p className={style.oldPrice}>10000₴</p>
-                        <p className={style.newPrice}>15000₴</p>
+                        <p className={style.oldPrice}>{bagPriceFull(type, size.value, keyHolder.value)}₴</p>
+                        <p className={style.newPrice}>{bagPrice(type, size.value, keyHolder.value)}₴</p>
                     </div>
                     <div className={`column ${style.optionList}`}>
                         <div className={style.option}>
                             <DropdownList name='fill' placeholder='Колір'
                                           value={color} editable={false}
-                                          options={colors} onChange={handleColorChange}
+                                          options={colors} onChange={handleBasicChange(setColor)}
                             />
                         </div>
                         <div className={style.option}>
                             <DropdownList name='fill' placeholder='Розмір'
                                           value={size} editable={false}
-                                          options={sizes} onChange={handleSizeChange}
+                                          options={sizes} onChange={handleBasicChange(setSize)}
                             />
                         </div>
                         <div className={style.option}>
                             <DropdownList name='fill' placeholder='Ключниця'
                                           value={keyHolder} editable={false}
-                                          options={keyHolders} onChange={handleKeyHolderChange}
+                                          options={keyHolderStates} onChange={handleBasicChange(setKeyHolder)}
                             />
                         </div>
                     </div>
-                    <ItemFeature
-                        text='Кольори: чорний, темно-коричневий, світло-коричневий, вишневий, рудий, бежевий, світло-бежевий'/>
-                    <ItemFeature text='Виконана з натуральної шкіри'/>
-                    <ItemFeature text='Міцна, надійна та практична підкладка'/>
-                    <ItemFeature
-                        text='Всередині три відділення, щоб зручно розділити телефон, ключі, гроші та різні дрібнички'/>
-                    <ItemFeature text='Металевий бігунок з фіксатором, який надійно і плавно їздить по блискавці'/>
-                    <ItemFeature text='Розмір L: 13х27х8,5 см'/>
-                    <ItemFeature text='Розмір XL: 30х20х9 см'/>
+                    {features.map((e, i) =>
+                        <ItemFeature text={e} key={i}/>)}
                     <button className={style.orderButton}>Замовити</button>
                 </div>
             </div>

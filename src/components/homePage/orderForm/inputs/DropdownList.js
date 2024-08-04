@@ -1,11 +1,11 @@
 import styles from './Input.module.css';
-import {useEffect, useRef, useState} from "react";
+import {useRef, useState} from "react";
 
 const DropdownList = ({
                           name, placeholder, value,
                           editable, options, onChange,
-                          setError, checkErrorTrigger,
-                          disabled, onScrollDown
+                          disabled, onScrollDown,
+                          errors, setErrors, submitting
                       }) => {
     const [error, setErrorObject] = useState({
         hasError: false,
@@ -50,27 +50,30 @@ const DropdownList = ({
         }
     }
 
-    const checkError = () => {
-        if (value.value === null) {
-            setErrorObject({
-                hasError: true,
-                message: "Поле є обов'язковим"
-            })
-            return true;
-        }
+    // const checkError = useCallback(() => {
+    //     if (value.value === null) {
+    //         setErrorObject({
+    //             hasError: true,
+    //             message: "Поле є обов'язковим"
+    //         })
+    //         return true;
+    //     }
+    //
+    //     setErrorObject({
+    //         hasError: false,
+    //         message: ''
+    //     });
+    //     return false;
+    // }, [value.value])
+    // useEffect(() => {
+    //     checkError()
+    // }, [checkError, value]);
 
-        setErrorObject({
-            hasError: false,
-            message: ''
-        });
-        return false;
-    }
-
-    useEffect(() => {
-        if (checkErrorTrigger) {
-            setError(checkError());
-        }
-    }, [checkErrorTrigger]);
+    // useEffect(() => {
+    //     if (submitting) {
+    //         setErrors(checkError());
+    //     }
+    // }, [submitting, checkError, setErrors]);
 
     const input = useRef();
     const onWrapperClick = () => {
@@ -107,14 +110,16 @@ const DropdownList = ({
                            value={value.title}
                            onFocus={(e) => {
                                setFocused(true);
-                               onChange({
-                                   title: e.target.value,
-                                   value: null
-                               });
+                               if (value.title !== value.value) {
+                                   onChange({
+                                       title: e.target.value,
+                                       value: null
+                                   });
+                               }
                            }}
                            onBlur={() => {
                                setFocused(false);
-                               checkError();
+                               // checkError();
                            }}
                            placeholder={placeholder}
                            ref={input}
@@ -125,7 +130,7 @@ const DropdownList = ({
                 </div>
                 <div className={`${styles.dropdown_content}
                  ${isShown() ? styles.showContent : ''}
-                 ${error.hasError ? styles.dropdownError : ''}`}>
+                 ${error.hasError ? styles.dropdownError : styles.dropdownBorder}`}>
                     <div className={styles.scrollable} ref={scrollableRef}
                          onScroll={onScrollDown ? onScroll : () => {
                          }}>
@@ -139,7 +144,6 @@ const DropdownList = ({
                                             title: c.title,
                                             value: c.value
                                         });
-                                        checkError();
                                     }}
                                     onMouseEnter={() => setIndex(i)}>
                                 {c.title}

@@ -71,7 +71,7 @@ const Carousel = (props) => {
                 </div>
             </div>
             <div className={style.smallWrapper}>
-                <SmallSlider xPosition={xPosition} className={style.ratioSet}>
+                <SmallSlider xPosition={xPosition}>
                     {props.images.map((image, i) => (
                         <div className={`${style.cover} ${style.coveredImage}`}
                              key={i} onClick={() => setIndexAndPosition(i)}>

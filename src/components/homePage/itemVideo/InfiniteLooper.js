@@ -15,7 +15,7 @@ const InfiniteLoop = (props) => {
         const instanceWidth = width / innerRef.current.children.length;
 
         if (width < parentWidth + instanceWidth) {
-            setInstanceCount(instanceCount + Math.ceil(parentWidth / width));
+            setInstanceCount(instanceCount + Math.ceil(parentWidth / width) + 3);
         }
     }, [instanceCount]);
 
