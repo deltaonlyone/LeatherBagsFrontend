@@ -1,14 +1,16 @@
 import React, {useCallback, useRef, useState} from "react";
-import axios from "axios";
 import styles from "./OrderForm.module.css";
 import DropdownList from "./inputs/DropdownList";
+import {estimateDeliveryPrice, loadCities, loadDepartments} from "../../../services/NovaApiService";
 
 const pageLimit = 15;
 
-const DeliveryInputs = ({city, setCity,
+const DeliveryInputs = ({
+                            city, setCity,
                             department, setDepartment,
-                            setPrice,
-                            errors, setErrors, submitting}) => {
+                            setPrice, packagePrice,
+                            errors, setErrors, submitting
+                        }) => {
     const [citySuggestions, setCitySuggestions] = useState([]);
     let cityPage = useRef(1);
     let cityHasNext = useRef(true);
@@ -24,16 +26,8 @@ const DeliveryInputs = ({city, setCity,
         }
         if (cityName) {
             try {
-                const response = await axios.post('https://api.novaposhta.ua/v2.0/json/', {
-                    apiKey: 'ad9f19d77f0329680046910f08946c8f',
-                    modelName: 'AddressGeneral',
-                    calledMethod: 'searchSettlements',
-                    methodProperties: {
-                        CityName: cityName,
-                        Limit: pageLimit,
-                        Page: cityPage.current
-                    }
-                });
+                const response = await loadCities(cityName, cityPage.current, pageLimit);
+
                 setCitySuggestions([...(refresh ? [] : citySuggestions),
                     ...response.data.data[0].Addresses.map(v => {
                         return {
@@ -51,22 +45,10 @@ const DeliveryInputs = ({city, setCity,
         }
     }, [citySuggestions]);
     const checkPrice = useCallback(async (cityRef) => {
-        const response = await axios.post('https://api.novaposhta.ua/v2.0/json/', {
-            apiKey: 'ad9f19d77f0329680046910f08946c8f',
-            modelName: "InternetDocumentGeneral",
-            calledMethod: "getDocumentPrice",
-            methodProperties: {
-                CitySender: "e71abb60-4b33-11e4-ab6d-005056801329",
-                CityRecipient: cityRef,
-                Weight: "1",
-                ServiceType: "WarehouseWarehouse",
-                Cost: "1000",
-                CargoType: "Cargo",
-                SeatsAmount: "1"
-            }
-        });
+        const response = await estimateDeliveryPrice(cityRef, packagePrice);
+
         setPrice(response.data.data[0].Cost);
-    }, [setPrice])
+    }, [setPrice, packagePrice]);
 
     const handleCityChange = useCallback(async (e) => {
         if (city.title !== e.title) {
@@ -101,22 +83,8 @@ const DeliveryInputs = ({city, setCity,
 
         if (city.value) {
             try {
-                const properties = {
-                    Page: departmentPage.current,
-                    Limit: pageLimit,
-                    CityRef: city.value,
-                    Language: 'UA'
-                }
-                if (departmentName) {
-                    properties.FindByString = departmentName;
-                }
-
-                const response = await axios.post('https://api.novaposhta.ua/v2.0/json/', {
-                    apiKey: 'ad9f19d77f0329680046910f08946c8f',
-                    modelName: 'AddressGeneral',
-                    calledMethod: 'getWarehouses',
-                    methodProperties: properties
-                });
+                const response = await loadDepartments(city.value,
+                    departmentName, departmentPage.current, pageLimit);
 
                 setDepartmentSuggestions([...(refresh ? [] : departmentSuggestions),
                     ...response.data.data.map(v => {

@@ -1,16 +1,28 @@
 import styles from './Input.module.css';
-import {useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 
 const DropdownList = ({
                           name, placeholder, value,
                           editable, options, onChange,
                           disabled, onScrollDown,
-                          errors, setErrors, submitting
+                          setErrors, submitting
                       }) => {
-    const [error, setErrorObject] = useState({
+    const [error, setError] = useState({
         hasError: false,
         message: ''
     });
+    const setAllErrors = useCallback((err) => {
+        setError(err);
+        setErrors((prevError) => {
+            const newError = {...prevError};
+            if (err.hasError) {
+                newError[name] = err.hasError
+            } else {
+                delete newError[name];
+            }
+            return newError;
+        });
+    }, [name, setErrors]);
 
     const [hovered, setHovered] = useState(false);
     const [focused, setFocused] = useState(false);
@@ -50,30 +62,37 @@ const DropdownList = ({
         }
     }
 
-    // const checkError = useCallback(() => {
-    //     if (value.value === null) {
-    //         setErrorObject({
-    //             hasError: true,
-    //             message: "Поле є обов'язковим"
-    //         })
-    //         return true;
-    //     }
-    //
-    //     setErrorObject({
-    //         hasError: false,
-    //         message: ''
-    //     });
-    //     return false;
-    // }, [value.value])
-    // useEffect(() => {
-    //     checkError()
-    // }, [checkError, value]);
+    const checkError = useCallback(() => {
+        if (value.value === null) {
+            setAllErrors({
+                hasError: true,
+                message: "Поле є обов'язковим"
+            })
+            return;
+        }
 
-    // useEffect(() => {
-    //     if (submitting) {
-    //         setErrors(checkError());
-    //     }
-    // }, [submitting, checkError, setErrors]);
+        setAllErrors({
+            hasError: false,
+            message: ''
+        });
+    }, [value.value, setAllErrors]);
+
+    const hasMounted = useRef(false);
+    useEffect(() => {
+        if (hasMounted.current) {
+            if (setErrors) {
+                checkError();
+            }
+        } else {
+            hasMounted.current = true;
+        }
+    }, [value.value]);
+
+    useEffect(() => {
+        if (submitting) {
+            checkError();
+        }
+    }, [submitting, checkError]);
 
     const input = useRef();
     const onWrapperClick = () => {
@@ -119,7 +138,7 @@ const DropdownList = ({
                            }}
                            onBlur={() => {
                                setFocused(false);
-                               // checkError();
+                               checkError();
                            }}
                            placeholder={placeholder}
                            ref={input}

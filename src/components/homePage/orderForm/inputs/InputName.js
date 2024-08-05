@@ -2,21 +2,23 @@ import styles from './Input.module.css';
 import {useCallback, useEffect, useState} from "react";
 import FormInput from "./FormInput";
 
-const InputName = ({name, placeholder, value, setValue, errors, setErrors, submitting}) => {
+const InputName = ({name, placeholder, value, setValue, setErrors, submitting}) => {
     const [error, setError] = useState({
         hasError: false,
         message: ''
     });
     const setAllErrors = useCallback((err) => {
         setError(err);
-        const newError = {...errors};
-        if (err.hasError) {
-            newError[name] = err.hasError
-        } else {
-            delete newError[name];
-        }
-        setErrors(newError);
-    }, []);
+        setErrors((prevError) => {
+            const newError = {...prevError};
+            if (err.hasError) {
+                newError[name] = err.hasError
+            } else {
+                delete newError[name];
+            }
+            return newError;
+        });
+    }, [name, setErrors]);
 
     const handleInput = (event) => {
         setValue(event.target.value);

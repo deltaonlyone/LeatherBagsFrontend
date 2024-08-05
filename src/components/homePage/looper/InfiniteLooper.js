@@ -23,6 +23,8 @@ const InfiniteLoop = (props) => {
         setupInstances();
     }, []);
 
+    window.addEventListener('resize', setupInstances);
+
     useEffect(() => {
         setAnimationEnabled(true);
     }, []);

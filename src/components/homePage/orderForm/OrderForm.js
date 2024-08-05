@@ -7,6 +7,7 @@ import DeliveryInputs from "./DeliveryInputs";
 import {colorOptions, keyHolderOptions, sizeOptions, typeOptions} from "../bagsInfo/BagsOptions";
 import {bagPrice} from "../bagsInfo/BagsPrices";
 import handleBasicChange from "./inputs/HandleChanges";
+import {requestBag} from "../../../services/ApiService";
 
 const OrderForm = ({pType, pSize, pColor, pKeyHolder}) => {
     const [firstName, setFirstName] = useState('');
@@ -15,7 +16,7 @@ const OrderForm = ({pType, pSize, pColor, pKeyHolder}) => {
     const [phoneNum, setPhoneNum] = useState('+380');
 
 
-    const [types, setTypes] = useState(typeOptions());
+    const [types] = useState(typeOptions());
     const [type, setType] = useState(pType ? pType : types[0]);
 
     const [sizes, setSizes] = useState(sizeOptions(type.value));
@@ -24,7 +25,7 @@ const OrderForm = ({pType, pSize, pColor, pKeyHolder}) => {
     const [colors, setColors] = useState(colorOptions(type.value, size.value));
     const [color, setColor] = useState(pColor ? pColor : colors[0]);
 
-    const [keyHolderStates, setKeyHoldersStates] = useState(keyHolderOptions());
+    const [keyHolderStates] = useState(keyHolderOptions());
     const [keyHolder, setKeyHolder] = useState(pKeyHolder ? pKeyHolder : keyHolderStates[0]);
 
     useEffect(() => {
@@ -54,30 +55,61 @@ const OrderForm = ({pType, pSize, pColor, pKeyHolder}) => {
         setPrice(bagPrice(type.value, size.value, keyHolder.value))
     }, [type.value, size.value, keyHolder.value]);
 
+    const formFields = [
+        'firstName',
+        'lastName',
+        'middleName',
+        'num',
+        'type',
+        'fill',
+        'keyholder',
+        'size',
+        'place',
+        'department'
+    ];
+    const [submitting, setSubmitting] = useState(0);
     const [errors, setErrors] = useState({});
-    const [submitting, setSubmitting] = useState(false);
 
     const sendData = (event) => {
         event.preventDefault();
-        // console.log({
-        //     firstName: firstName,
-        //     lastName: lastName,
-        //     middleName: middleName,
-        //     phoneNum: phoneNum,
-        //     type: type,
-        //     size: size,
-        //     color: color.value,
-        //     keyHolder: keyHolder,
-        //     city: city.title,
-        //     department: department.value,
-        //     price: price + deliveryPrice
-        // });
-        setSubmitting(true);
+        const newErrors = {};
+        for (const field of formFields) {
+            newErrors[field] = true;
+        }
+        setErrors(newErrors);
+        setSubmitting(2);
     };
 
     useEffect(() => {
-        // console.log(errors)
-    }, [errors, submitting]);
+        if (submitting === 2) {
+            setSubmitting(1);
+        } else if (submitting === 1) {
+            if (Object.keys(errors).length === 0) {
+                    requestBag({
+                        firstName: firstName,
+                        lastName: lastName,
+                        middleName: middleName,
+                        phoneNum: phoneNum,
+                        type: type,
+                        size: size,
+                        color: color.value,
+                        keyHolder: keyHolder,
+                        city: city.title,
+                        department: department.value,
+                        price: price + deliveryPrice
+                    })
+                        .then(r => console.log(r))
+                        .catch(e => console.log(e));
+            }
+            setSubmitting(0);
+        }
+    }, [errors, submitting,
+        firstName, lastName,
+        middleName, phoneNum,
+        type, size,
+        color.value, keyHolder,
+        city.value, department.value,
+        price, deliveryPrice]);
 
     return (
         <form className={`column ${styles.orderForm}`}>
@@ -90,15 +122,13 @@ const OrderForm = ({pType, pSize, pColor, pKeyHolder}) => {
                 <div className={styles.twoColumns}>
                     <InputName name='firstName' placeholder="Ім'я"
                                value={firstName} setValue={setFirstName}
-                               errors={errors} setErrors={setErrors}
-                               submitting={submitting}
+                               setErrors={setErrors} submitting={submitting}
                     />
                 </div>
                 <div className={styles.twoColumns}>
                     <InputName name='lastName' placeholder='Прізвище'
                                value={lastName} setValue={setLastName}
-                               errors={errors} setErrors={setErrors}
-                               submitting={submitting}
+                               setErrors={setErrors} submitting={submitting}
                     />
                 </div>
             </div>
@@ -106,15 +136,13 @@ const OrderForm = ({pType, pSize, pColor, pKeyHolder}) => {
                 <div className={styles.twoColumns}>
                     <InputName name='middleName' placeholder='По батькові'
                                value={middleName} setValue={setMiddleName}
-                               errors={errors} setErrors={setErrors}
-                               submitting={submitting}
+                               setErrors={setErrors} submitting={submitting}
                     />
                 </div>
                 <div className={styles.twoColumns}>
                     <InputPhoneNum name='num'
                                    value={phoneNum} setValue={setPhoneNum}
-                                   errors={errors} setErrors={setErrors}
-                                   submitting={submitting}
+                                   setErrors={setErrors} submitting={submitting}
                     />
                 </div>
             </div>
@@ -126,8 +154,7 @@ const OrderForm = ({pType, pSize, pColor, pKeyHolder}) => {
                     <DropdownList name='type' placeholder='Тип cумки'
                                   value={type} editable={false}
                                   options={types} onChange={handleBasicChange(setType)}
-                                  errors={errors} setErrors={setErrors}
-                                  submitting={errors}
+                                  setErrors={setErrors} submitting={submitting}
                     />
                 </div>
             </div>
@@ -139,16 +166,14 @@ const OrderForm = ({pType, pSize, pColor, pKeyHolder}) => {
                     <DropdownList name='fill' placeholder='Колір'
                                   value={color} editable={false}
                                   options={colors} onChange={handleBasicChange(setColor)}
-                                  errors={errors} setErrors={setErrors}
-                                  submitting={errors}
+                                  setErrors={setErrors} submitting={submitting}
                     />
                 </div>
                 <div className={styles.twoColumns}>
                     <DropdownList name='keyholder' placeholder='Ключниця'
                                   value={keyHolder} editable={false}
                                   options={keyHolderStates} onChange={handleBasicChange(setKeyHolder)}
-                                  errors={errors} setErrors={setErrors}
-                                  submitting={errors}
+                                  setErrors={setErrors} submitting={submitting}
                     />
                 </div>
             </div>
@@ -156,15 +181,13 @@ const OrderForm = ({pType, pSize, pColor, pKeyHolder}) => {
                 <DropdownList name='size' placeholder='Розмір'
                               value={size} editable={false}
                               options={sizes} onChange={handleBasicChange(setSize)}
-                              errors={errors} setErrors={setErrors}
-                              submitting={errors}
+                              setErrors={setErrors} submitting={submitting}
                 />
             </div>
             <DeliveryInputs city={city} setCity={setCity}
                             department={department} setDepartment={setDepartment}
-                            setPrice={setDeliveryPrice}
-                            errors={errors} setErrors={setErrors}
-                            submitting={submitting}
+                            setPrice={setDeliveryPrice} packagePrice={price}
+                            setErrors={setErrors} submitting={submitting}
             />
             <div className={styles.price}>
                 <h3>Ціна замовлення: {price}+{deliveryPrice}={price + deliveryPrice}₴</h3>
