@@ -4,8 +4,8 @@ import InputPhoneNum from "./inputs/InputPhoneNum";
 import InputName from "./inputs/InputName";
 import DropdownList from "./inputs/DropdownList";
 import DeliveryInputs from "./DeliveryInputs";
-import {colorOptions, keyHolderOptions, sizeOptions, typeOptions} from "../bagsInfo/BagsOptions";
-import {bagPrice} from "../bagsInfo/BagsPrices";
+import {colorOptions, keyHolderOptions, sizeOptions, typeOptions} from "../../../services/BagsOptions";
+import {bagPrice} from "../../../services/BagsPrices";
 import handleBasicChange from "./inputs/HandleChanges";
 import {requestBag} from "../../../services/ApiService";
 

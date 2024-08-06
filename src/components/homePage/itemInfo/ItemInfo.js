@@ -3,9 +3,9 @@ import Carousel from "./Carousel";
 import ItemFeature from "./ItemFeature";
 import DropdownList from "../orderForm/inputs/DropdownList";
 import React, {useEffect, useState} from "react";
-import {colorOptions, keyHolderOptions, sizeOptions} from "../bagsInfo/BagsOptions";
+import {colorOptions, keyHolderOptions, sizeOptions} from "../../../services/BagsOptions";
 import handleBasicChange from "../orderForm/inputs/HandleChanges";
-import {bagPrice, bagPriceFull} from "../bagsInfo/BagsPrices";
+import {bagPrice, bagPriceFull} from "../../../services/BagsPrices";
 
 const ItemInfo = ({type, images, features}) => {
     const sizes = sizeOptions(type);

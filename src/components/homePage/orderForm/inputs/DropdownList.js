@@ -127,14 +127,8 @@ const DropdownList = ({
                                value: null
                            })}
                            value={value.title}
-                           onFocus={(e) => {
+                           onFocus={() => {
                                setFocused(true);
-                               if (value.title !== value.value) {
-                                   onChange({
-                                       title: e.target.value,
-                                       value: null
-                                   });
-                               }
                            }}
                            onBlur={() => {
                                setFocused(false);

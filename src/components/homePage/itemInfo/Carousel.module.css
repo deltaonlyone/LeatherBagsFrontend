@@ -57,6 +57,10 @@
     border-radius: 1vw;
 }
 
+.smallWrapper > div {
+    gap: 5%;
+}
+
 .blurImage {
     position: absolute;
     top: 0;
@@ -72,10 +76,6 @@
     box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
 }
 
-.cover:not(:last-child) {
-    margin-right: 5%;
-}
-
 .cover > img {
     width: 100%;
     height: 100%;
@@ -87,8 +87,8 @@
         width: 20%;
     }
 
-    .cover:not(:last-child) {
-        margin-right: 6%;
+    .smallWrapper > div {
+        gap: 6%;
     }
 
     .ratio120 {

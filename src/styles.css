@@ -4,6 +4,10 @@
     color: var(--main-text-color);
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 :root {
     --main-background-color: #E8CBA8;
     --secondary-background-color: #C98345;
