@@ -1,7 +1,7 @@
-import React, {useCallback, useRef, useState} from "react";
-import styles from "./OrderForm.module.css";
-import DropdownList from "./inputs/DropdownList";
-import {estimateDeliveryPrice, loadCities, loadDepartments} from "../../../services/NovaApiService";
+import React, {useCallback, useEffect, useRef, useState} from "react";
+import styles from "../OrderForm.module.css";
+import DropdownList from "./DropdownList";
+import {estimateDeliveryPrice, loadCities, loadDepartments} from "../../../../services/NovaApiService";
 
 const pageLimit = 15;
 
@@ -47,7 +47,7 @@ const DeliveryInputs = ({
     const checkPrice = useCallback(async (cityRef) => {
         const response = await estimateDeliveryPrice(cityRef, packagePrice);
 
-        setPrice(response.data.data[0].Cost);
+        setPrice(Math.ceil(response.data.data[0].Cost));
     }, [setPrice, packagePrice]);
 
     const handleCityChange = useCallback(async (e) => {
@@ -113,6 +113,15 @@ const DeliveryInputs = ({
         loadDepartmentSuggestions(department.title, false)
             .then();
     }, [loadDepartmentSuggestions, department.title]);
+
+    useEffect(() => {
+        setDepartment({
+            title: '',
+            value: ''
+        })
+        loadDepartmentSuggestions(department.title, true)
+            .then();
+    }, [city.value]);
 
     return (
         <div className={`column ${styles.oneColumn}  ${styles.centeredRow}`}>

@@ -14,7 +14,7 @@ import SaleInfiniteLine from "./saleInfiniteLine/SaleInfiniteLine";
 const Home = () => {
 
     return (
-        <div className={`${styles['home']}`}>
+        <div className={`${styles['home']} nonDraggable`}>
             <NavBar></NavBar>
             <TopInfo></TopInfo>
             <SaleTimer></SaleTimer>

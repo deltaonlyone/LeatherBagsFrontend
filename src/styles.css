@@ -1,6 +1,7 @@
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
     color: var(--main-text-color);
 }
 
@@ -48,4 +49,10 @@ button:hover {
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.draggable {
+    -webkit-user-select: auto;
+    -ms-user-select: auto;
+    user-select: auto;
 }

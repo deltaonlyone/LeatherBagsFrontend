@@ -123,10 +123,10 @@
     background-color: transparent;
     color: var(--main-text-color);
     font-size: 1.2rem;
-    padding: 0.5rem 1rem;
+    padding: 0.5em 1em;
     margin-top: 1.5vh;
     border: var(--main-text-color) 2px solid;
-    border-radius: 1rem;
+    border-radius: 1em;
     width: 70%;
 }
 

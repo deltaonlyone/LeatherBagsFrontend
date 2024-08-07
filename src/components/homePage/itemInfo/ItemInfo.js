@@ -4,7 +4,7 @@ import ItemFeature from "./ItemFeature";
 import DropdownList from "../orderForm/inputs/DropdownList";
 import React, {useEffect, useState} from "react";
 import {colorOptions, keyHolderOptions, sizeOptions} from "../../../services/BagsOptions";
-import handleBasicChange from "../orderForm/inputs/HandleChanges";
+import {handleBasicChange} from "../orderForm/inputs/InputUtils";
 import {bagPrice, bagPriceFull} from "../../../services/BagsPrices";
 
 const ItemInfo = ({type, images, features}) => {

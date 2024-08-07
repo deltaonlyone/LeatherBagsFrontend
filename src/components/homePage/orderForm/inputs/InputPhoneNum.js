@@ -1,25 +1,10 @@
 import styles from './Input.module.css';
 import {useCallback, useEffect, useState} from "react";
 import FormInput from "./FormInput";
+import {useSetupError} from "./InputUtils";
 
 const InputPhoneNum = ({name, value, setValue, setErrors, submitting}) => {
-    const [error, setError] = useState({
-        hasError: false,
-        message: ''
-    });
-    const setAllErrors = useCallback((err) => {
-        setError(err);
-        setErrors((prevError) => {
-            const newError = {...prevError};
-            if (err.hasError) {
-                newError[name] = err.hasError
-            } else {
-                delete newError[name];
-            }
-            return newError;
-        });
-
-    }, [name, setErrors]);
+    const [error, setAllErrors] = useSetupError(name, setErrors);
 
     const [displayValue, setDisplayValue] = useState('+380');
     const handleInput = (event) => {

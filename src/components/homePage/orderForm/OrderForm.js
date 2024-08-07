@@ -3,10 +3,10 @@ import React, {useEffect, useState} from 'react';
 import InputPhoneNum from "./inputs/InputPhoneNum";
 import InputName from "./inputs/InputName";
 import DropdownList from "./inputs/DropdownList";
-import DeliveryInputs from "./DeliveryInputs";
+import DeliveryInputs from "./inputs/DeliveryInputs";
 import {colorOptions, keyHolderOptions, sizeOptions, typeOptions} from "../../../services/BagsOptions";
 import {bagPrice} from "../../../services/BagsPrices";
-import handleBasicChange from "./inputs/HandleChanges";
+import {handleBasicChange} from "./inputs/InputUtils";
 import {requestBag} from "../../../services/ApiService";
 
 const OrderForm = ({pType, pSize, pColor, pKeyHolder}) => {
@@ -85,21 +85,21 @@ const OrderForm = ({pType, pSize, pColor, pKeyHolder}) => {
             setSubmitting(1);
         } else if (submitting === 1) {
             if (Object.keys(errors).length === 0) {
-                    requestBag({
-                        firstName: firstName,
-                        lastName: lastName,
-                        middleName: middleName,
-                        phoneNum: phoneNum,
-                        type: type,
-                        size: size,
-                        color: color.value,
-                        keyHolder: keyHolder,
-                        city: city.title,
-                        department: department.value,
-                        price: price + deliveryPrice
-                    })
-                        .then(r => console.log(r))
-                        .catch(e => console.log(e));
+                requestBag({
+                    firstName: firstName,
+                    lastName: lastName,
+                    middleName: middleName,
+                    phoneNum: phoneNum,
+                    type: type.title,
+                    size: size.value,
+                    color: color.value,
+                    keyHolder: keyHolder.value,
+                    city: city.title,
+                    department: department.value,
+                    price: price + deliveryPrice
+                })
+                    .then(r => alert('Ok'))
+                    .catch(e => alert('Error'));
             }
             setSubmitting(0);
         }
