@@ -55,11 +55,11 @@ const NavBar = () => {
             </ul>
 
             <div className={styles.links}>
-                <a href="#Home" className={styles.link}>Головна</a>
-                <a href="#Bag" className={styles.link}>Товар</a>
-                <a href="#Video" className={styles.link}>Відеоогляд</a>
-                <a href="#Comments" className={styles.link}>Відгуки</a>
-                <a href="#Order" className={styles.link}>Замовити</a>
+                <a href="#home" className={styles.link}>Головна</a>
+                <a href="#bag" className={styles.link}>Товар</a>
+                <a href="#video" className={styles.link}>Відеоогляд</a>
+                <a href="#comments" className={styles.link}>Відгуки</a>
+                <a href="#order" className={styles.link}>Замовити</a>
             </div>
             <div className={styles.phoneButton}>
                 <PhoneButton phoneNumber="+380123456789"/>

@@ -1,13 +1,15 @@
 import style from './ItemInfo.module.css';
-import Carousel from "./Carousel";
+import Carousel from "../../elements/carousel/Carousel";
 import ItemFeature from "./ItemFeature";
 import DropdownList from "../orderForm/inputs/DropdownList";
 import React, {useEffect, useState} from "react";
-import {colorOptions, keyHolderOptions, sizeOptions} from "../bagsInfo/BagsOptions";
-import handleBasicChange from "../orderForm/inputs/HandleChanges";
-import {bagPrice, bagPriceFull} from "../bagsInfo/BagsPrices";
+import {colorOptions, getType, keyHolderOptions, sizeOptions} from "../../../services/BagsOptions";
+import {handleBasicChange} from "../orderForm/inputs/InputUtils";
+import {bagPrice, bagPriceFull} from "../../../services/BagsPrices";
 
-const ItemInfo = ({type, images, features}) => {
+const ItemInfo = ({type, images, features, openForm}) => {
+    const fullType = getType(type);
+
     const sizes = sizeOptions(type);
     const [size, setSize] = useState(sizes[0]);
 
@@ -21,7 +23,10 @@ const ItemInfo = ({type, images, features}) => {
         const colors = colorOptions(type, size.value);
         setColors(colors);
         setColor(colors[0]);
-    }, [size.value]);
+    }, [size.value, type]);
+
+    const onOpenForm = () =>
+        openForm(fullType, size, color, keyHolder);
 
     return (
         <div className={'centeredComponent'}>
@@ -31,7 +36,7 @@ const ItemInfo = ({type, images, features}) => {
                               images={images}/>
                 </div>
                 <div className={`column ${style.infoText}`}>
-                    <h3 className={style.titleText}>СУМКА БАНАНКА З НАТУРАЛЬНОЇ ШКІРИ РОЗМІР L або XL!</h3>
+                    <h3 className={style.titleText}>{fullType.title}</h3>
                     <div className={`row ${style.price}`}>
                         <p className={style.oldPrice}>{bagPriceFull(type, size.value, keyHolder.value)}₴</p>
                         <p className={style.newPrice}>{bagPrice(type, size.value, keyHolder.value)}₴</p>
@@ -58,7 +63,10 @@ const ItemInfo = ({type, images, features}) => {
                     </div>
                     {features.map((e, i) =>
                         <ItemFeature text={e} key={i}/>)}
-                    <button className={style.orderButton}>Замовити</button>
+                    <button className={style.orderButton}
+                            onClick={onOpenForm}>
+                        Замовити
+                    </button>
                 </div>
             </div>
         </div>

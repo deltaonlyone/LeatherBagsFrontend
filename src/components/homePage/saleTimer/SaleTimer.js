@@ -32,13 +32,13 @@ const SaleTimer = () => {
             <div className={styles.text}>ЗНИЖКА ДІЙСНА ЩЕ:</div>
             <div className={styles.timer}>
                 <div className={styles.time}>
-                    <a className={styles.var}>{timeLeft.hours}</a>Годин
+                    <span className={styles.var}>{timeLeft.hours}</span>Годин
                 </div>
                 <div className={styles.time}>
-                    <a className={styles.var}>{timeLeft.minutes}</a>Хвилин
+                    <span className={styles.var}>{timeLeft.minutes}</span>Хвилин
                 </div>
                 <div className={styles.time}>
-                    <a className={styles.var}>{timeLeft.seconds}</a>Секунд
+                    <span className={styles.var}>{timeLeft.seconds}</span>Секунд
                 </div>
             </div>
 

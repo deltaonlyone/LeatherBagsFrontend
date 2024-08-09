@@ -1,3 +1,7 @@
+:root {
+    --padding: 1em;
+}
+
 .inputColumn {
     display: flex;
     flex-direction: column;
@@ -10,8 +14,8 @@
     background-color: var(--input-color);
     box-sizing: border-box;
     border: 1px var(--main-text-color) solid;
-    border-radius: 1rem;
-    padding: 0 1rem;
+    border-radius: 1em;
+    padding: 0 var(--padding);
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
@@ -53,6 +57,7 @@
 
 .error {
     width: 10%;
+    max-height: 1.5em;
     object-fit: contain;
 }
 
@@ -81,7 +86,7 @@
 }
 
 .arrow {
-    width: 1.5rem;
+    width: 1.5em;
     height: 70%;
     object-fit: contain;
     transition: transform 0.5s ease-in-out;
@@ -105,13 +110,13 @@
     z-index: 1;
     background-color: var(--input-color);
     border-top: none;
-    border-radius: 0 0 0.7vw 0.7vw;
+    border-radius: 0 0 var(--padding) var(--padding);
 }
 
 .scrollable {
     width: 100%;
-    min-height: 0.7vw;
-    max-height: 10vh;
+    min-height: var(--padding);
+    max-height: calc(6.2em + 15px);
     overflow: auto;
     box-sizing: border-box;
 }
@@ -137,9 +142,9 @@
 .dropdown_option {
     width: 100%;
     box-sizing: border-box;
-    padding: 0.5vh 0.7vw;
+    padding: 0.4em var(--padding);
     text-align: start;
-    font-size: 1rem;
+    font-size: 1em;
 }
 
 .showContent {
@@ -149,5 +154,5 @@
 
 .hoveredWrapper {
     border-bottom: 0;
-    border-radius: 0.7vw 0.7vw 0 0;
+    border-radius: var(--padding) var(--padding) 0 0;
 }

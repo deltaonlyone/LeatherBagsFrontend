@@ -1,5 +1,6 @@
 import styles from './Input.module.css';
 import {useCallback, useEffect, useRef, useState} from "react";
+import {useSetupError} from "./InputUtils";
 
 const DropdownList = ({
                           name, placeholder, value,
@@ -7,22 +8,8 @@ const DropdownList = ({
                           disabled, onScrollDown,
                           setErrors, submitting
                       }) => {
-    const [error, setError] = useState({
-        hasError: false,
-        message: ''
-    });
-    const setAllErrors = useCallback((err) => {
-        setError(err);
-        setErrors((prevError) => {
-            const newError = {...prevError};
-            if (err.hasError) {
-                newError[name] = err.hasError
-            } else {
-                delete newError[name];
-            }
-            return newError;
-        });
-    }, [name, setErrors]);
+    const [error, setAllErrors] = useSetupError(name, setErrors || (() => {}));
+    const checkValue = useRef(value.value);
 
     const [hovered, setHovered] = useState(false);
     const [focused, setFocused] = useState(false);
@@ -48,6 +35,7 @@ const DropdownList = ({
         if (event.key === 'Enter') {
             event.preventDefault();
             event.stopPropagation();
+            checkValue.current = options[index].value;
             onChange(options[index]);
         } else if (event.key === 'ArrowUp' && index > 0) {
             event.preventDefault();
@@ -63,7 +51,7 @@ const DropdownList = ({
     }
 
     const checkError = useCallback(() => {
-        if (value.value === null) {
+        if (checkValue.current === null) {
             setAllErrors({
                 hasError: true,
                 message: "Поле є обов'язковим"
@@ -75,18 +63,7 @@ const DropdownList = ({
             hasError: false,
             message: ''
         });
-    }, [value.value, setAllErrors]);
-
-    const hasMounted = useRef(false);
-    useEffect(() => {
-        if (hasMounted.current) {
-            if (setErrors) {
-                checkError();
-            }
-        } else {
-            hasMounted.current = true;
-        }
-    }, [value.value]);
+    }, [setAllErrors]);
 
     useEffect(() => {
         if (submitting) {
@@ -122,19 +99,16 @@ const DropdownList = ({
                         ${disabled ? styles.disabledWrapper : ''}`}>
                     <input type='text' name={name}
                            className={`${styles.listInput} ${editable ? '' : styles.unEditable}`}
-                           onChange={(e) => onChange({
-                               title: e.target.value,
-                               value: null
-                           })}
+                           onChange={(e) => {
+                               onChange({
+                                   title: e.target.value,
+                                   value: null
+                               });
+                               checkValue.current = null;
+                           }}
                            value={value.title}
-                           onFocus={(e) => {
+                           onFocus={() => {
                                setFocused(true);
-                               if (value.title !== value.value) {
-                                   onChange({
-                                       title: e.target.value,
-                                       value: null
-                                   });
-                               }
                            }}
                            onBlur={() => {
                                setFocused(false);
@@ -156,13 +130,14 @@ const DropdownList = ({
                         {options.map((c, i) => (
                             <option className={`${styles.dropdown_option} ${i === index ? styles.hoveredOption : ''}`}
                                     value={c.title} key={i}
-                                    onClick={(e) => {
-                                        e.preventDefault();
+                                    onMouseDown={(e) => {
                                         e.stopPropagation();
                                         onChange({
                                             title: c.title,
                                             value: c.value
                                         });
+                                        checkValue.current = c.value;
+                                        setFocused(false);
                                     }}
                                     onMouseEnter={() => setIndex(i)}>
                                 {c.title}

@@ -1,5 +1,5 @@
 import styles from './SaleInfiniteLine.module.css';
-import InfiniteLoop from "../looper/InfiniteLooper";
+import InfiniteLoop from "../../elements/looper/InfiniteLooper";
 
 const SaleInfiniteLine = () => {
     return (
