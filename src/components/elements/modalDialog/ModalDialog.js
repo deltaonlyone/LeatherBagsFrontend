@@ -1,7 +1,7 @@
 import styles from './ModalDialog.module.css';
 import {useEffect} from "react";
 
-const ModalDialog = ({isOpen, setOpen, children}) => {
+const ModalDialog = ({isOpen, setOpen, closeOnClick, children}) => {
     useEffect(() => {
         if (isOpen) {
             document.body.classList.add('no-scroll');
@@ -17,14 +17,13 @@ const ModalDialog = ({isOpen, setOpen, children}) => {
 
     return (
         <div className={styles.modalMask}>
-            <div className={styles.modalWrapper}
+            <div className={styles.modalContent}
                  onClick={(e) => {
-                     e.stopPropagation()
-                     setOpen(false);
+                     e.stopPropagation();
+                     closeOnClick || setOpen(false);
                  }}>
-                <div className={styles.modalContent}
-                     onClick={(e) =>
-                         e.stopPropagation()}>
+                <div onClick={(e) =>
+                    e.stopPropagation()}>
                     {children}
                 </div>
             </div>

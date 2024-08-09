@@ -11,8 +11,8 @@
     background-color: var(--form-color);
     align-items: center;
     justify-content: center;
-    padding: 5%;
-    border-radius: 1vw;
+    padding: 3vh 1.5vw;
+    border-radius: 1.5vw;
 }
 
 .orderForm h3 {

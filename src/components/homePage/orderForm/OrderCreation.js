@@ -2,7 +2,7 @@ import styles from './OrderCreation.module.css'
 import OrderInfo from "./OrderInfo";
 import OrderForm from "./OrderForm";
 
-const OrderCreation = () => {
+const OrderCreation = ({setResult}) => {
     return (
         <div className={`centeredComponent non-draggable`}>
             <div className={`row ${styles.orderCreation}`}>
@@ -25,7 +25,7 @@ const OrderCreation = () => {
                     </div>
                 </div>
                 <div className={`column ${styles.formContainer}`}>
-                    <OrderForm></OrderForm>
+                    <OrderForm setResult={setResult}></OrderForm>
                 </div>
             </div>
         </div>

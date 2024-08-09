@@ -15,7 +15,7 @@ import {bagPrice} from "../../../services/BagsPrices";
 import {handleBasicChange} from "./inputs/InputUtils";
 import {requestBag} from "../../../services/ApiService";
 
-const OrderForm = ({pType, pSize, pColor, pKeyHolder}) => {
+const OrderForm = ({pType, pSize, pColor, pKeyHolder, setResult}) => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [middleName, setMiddleName] = useState('');
@@ -93,6 +93,7 @@ const OrderForm = ({pType, pSize, pColor, pKeyHolder}) => {
         if (submitting === 2) {
             setSubmitting(1);
         } else if (submitting === 1) {
+            setResult('loading');
             if (Object.keys(errors).length === 0) {
                 requestBag({
                     firstName: firstName,
@@ -107,8 +108,8 @@ const OrderForm = ({pType, pSize, pColor, pKeyHolder}) => {
                     department: department.value,
                     price: price + deliveryPrice
                 })
-                    .then(r => alert('Ok'))
-                    .catch(e => alert('Error'));
+                    .then(r => setResult('ok'))
+                    .catch(e => setResult('error'));
             }
             setSubmitting(0);
         }

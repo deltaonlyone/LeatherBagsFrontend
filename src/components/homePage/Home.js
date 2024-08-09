@@ -10,6 +10,7 @@ import ItemComments from "./itemComments/ItemComments";
 import OrderCreation from "./orderForm/OrderCreation";
 import SaleInfiniteLine from "./saleInfiniteLine/SaleInfiniteLine";
 import ModalOrderForm from "./orderForm/modalForm/ModalOrderForm";
+import ResultDialogs from "./resultDialogs/ResultDialogs";
 
 
 const Home = () => {
@@ -20,6 +21,7 @@ const Home = () => {
         color: null,
         keyHolder: null
     });
+    const [result, setResult] = useState('');
 
     const openModalForm = (type, size, color, keyHolder) => {
         setFormValues({
@@ -55,6 +57,7 @@ const Home = () => {
                               'Розмір XL: 30х20х9 см'
                           ]}
                           openForm={openModalForm}
+                          setResult={setResult}
                 />
                 <SaleInfiniteLine></SaleInfiniteLine>
                 <ItemInfo type={2}
@@ -71,6 +74,7 @@ const Home = () => {
                               'Розмір L: 13х27х8,5 см'
                           ]}
                           openForm={openModalForm}
+                          setResult={setResult}
                 />
             </div>
             <div id='video'>
@@ -82,13 +86,17 @@ const Home = () => {
             </div>
             <SaleTimer></SaleTimer>
             <div id='order'>
-                <OrderCreation></OrderCreation>
+                <OrderCreation setResult={setResult}></OrderCreation>
             </div>
             <NavBar></NavBar>
             <ModalOrderForm isOpen={isOpen}
                             setOpen={setOpen}
                             formValues={formValues}
-
+                            result={result}
+                            setResult={setResult}
+            />
+            <ResultDialogs result={result}
+                           setResult={setResult}
             />
         </div>
     );
