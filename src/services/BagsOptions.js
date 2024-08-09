@@ -1,5 +1,5 @@
 export function getType(type) {
-    typeOptions().find(option => option.value === type);
+    return typeOptions().find(option => option.value === type);
 }
 
 export function typeOptions() {
@@ -52,4 +52,9 @@ export function keyHolderOptions() {
         title: 'Без ключниці',
         value: false
     }];
+}
+
+export function optionContainsValue(options, value) {
+    return options.find(e =>
+        e.value === value.value && e.title === value.title) !== null;
 }

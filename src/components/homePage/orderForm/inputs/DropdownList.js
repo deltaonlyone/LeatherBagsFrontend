@@ -63,13 +63,13 @@ const DropdownList = ({
             hasError: false,
             message: ''
         });
-    }, [checkValue.current, setAllErrors]);
+    }, [setAllErrors]);
 
     useEffect(() => {
         if (submitting) {
             checkError();
         }
-    }, [submitting]);
+    }, [submitting, checkError]);
 
     const input = useRef();
     const onWrapperClick = () => {
@@ -137,6 +137,7 @@ const DropdownList = ({
                                             value: c.value
                                         });
                                         checkValue.current = c.value;
+                                        setFocused(false);
                                     }}
                                     onMouseEnter={() => setIndex(i)}>
                                 {c.title}

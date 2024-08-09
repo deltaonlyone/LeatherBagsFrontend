@@ -1,5 +1,5 @@
 import styles from './ItemVideo.module.css';
-import InfiniteLooper from "../looper/InfiniteLooper";
+import InfiniteLooper from "../../elements/looper/InfiniteLooper";
 import {useEffect, useRef, useState} from "react";
 
 const ItemVideo = () => {

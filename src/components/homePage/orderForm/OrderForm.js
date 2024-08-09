@@ -4,7 +4,13 @@ import InputPhoneNum from "./inputs/InputPhoneNum";
 import InputName from "./inputs/InputName";
 import DropdownList from "./inputs/DropdownList";
 import DeliveryInputs from "./inputs/DeliveryInputs";
-import {colorOptions, keyHolderOptions, sizeOptions, typeOptions} from "../../../services/BagsOptions";
+import {
+    colorOptions,
+    keyHolderOptions,
+    optionContainsValue,
+    sizeOptions,
+    typeOptions
+} from "../../../services/BagsOptions";
 import {bagPrice} from "../../../services/BagsPrices";
 import {handleBasicChange} from "./inputs/InputUtils";
 import {requestBag} from "../../../services/ApiService";
@@ -14,7 +20,6 @@ const OrderForm = ({pType, pSize, pColor, pKeyHolder}) => {
     const [lastName, setLastName] = useState('');
     const [middleName, setMiddleName] = useState('');
     const [phoneNum, setPhoneNum] = useState('+380');
-
 
     const [types] = useState(typeOptions());
     const [type, setType] = useState(pType ? pType : types[0]);
@@ -31,13 +36,17 @@ const OrderForm = ({pType, pSize, pColor, pKeyHolder}) => {
     useEffect(() => {
         const sizes = sizeOptions(type.value);
         setSizes(sizes);
-        setSize(sizes[0]);
+        if (!optionContainsValue(sizes, size)) {
+            setSize(sizes[0]);
+        }
     }, [type.value]);
 
     useEffect(() => {
         const colors = colorOptions(type.value, size.value);
         setColors(colors);
-        setColor(colors[0]);
+        if (!optionContainsValue(colors, color)) {
+            setColor(colors[0]);
+        }
     }, [type.value, size.value]);
 
     const [city, setCity] = useState({
@@ -62,7 +71,7 @@ const OrderForm = ({pType, pSize, pColor, pKeyHolder}) => {
         'num',
         'type',
         'fill',
-        'keyholder',
+        'keyHolder',
         'size',
         'place',
         'department'
@@ -108,7 +117,7 @@ const OrderForm = ({pType, pSize, pColor, pKeyHolder}) => {
         middleName, phoneNum,
         type, size,
         color.value, keyHolder,
-        city.value, department.value,
+        city.title, department.value,
         price, deliveryPrice]);
 
     return (
@@ -170,7 +179,7 @@ const OrderForm = ({pType, pSize, pColor, pKeyHolder}) => {
                     />
                 </div>
                 <div className={styles.twoColumns}>
-                    <DropdownList name='keyholder' placeholder='Ключниця'
+                    <DropdownList name='keyHolder' placeholder='Ключниця'
                                   value={keyHolder} editable={false}
                                   options={keyHolderStates} onChange={handleBasicChange(setKeyHolder)}
                                   setErrors={setErrors} submitting={submitting}

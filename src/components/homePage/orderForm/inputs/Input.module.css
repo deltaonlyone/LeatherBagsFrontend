@@ -57,6 +57,7 @@
 
 .error {
     width: 10%;
+    max-height: 1.5em;
     object-fit: contain;
 }
 
