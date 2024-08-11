@@ -40,9 +40,9 @@ const Carousel = (props) => {
     const maxSmallOffset = useRef(0);
     const smallImageWidth = useRef(0);
     const calculateSliderSize = useCallback(() => {
-        if (!smallSlider.current && smallImageWidth.current
-            && smallImageWidth.current.length > 2) {
-            return
+        if (!smallSlider.current || !smallImageWidth.current
+            || smallImageWidth.current.length < 2) {
+            return;
         }
 
         const firstLeft = smallSliderImages.current[0].getBoundingClientRect().left;
