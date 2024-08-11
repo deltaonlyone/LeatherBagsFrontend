@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import style from './Carousel.module.css';
 import styled from 'styled-components';
 
@@ -23,20 +23,49 @@ const SmallSlider = styled.div.withConfig({
 })`
     display: flex;
     width: fit-content;
-    transform: ${props => `translateX(${props.xPosition}%)`};
+    transform: ${props => `translateX(${props.xPosition}px)`};
     transition: transform 0.6s ease-in-out;
 `;
 
 const Carousel = (props) => {
     const [index, setIndex] = useState(0);
     const [xPosition, setXPosition] = useState(0);
+    const calculateXPosition = useCallback((index) => {
+        return Math.min(0, Math.max(
+            -(index - 1) * smallImageWidth.current, maxSmallOffset.current));
+    }, [])
 
-    const maxSmallOffset = -(props.images.length - 3) * 35;
+    const smallSlider = useRef();
+    const smallSliderImages = useRef([]);
+    const maxSmallOffset = useRef(0);
+    const smallImageWidth = useRef(0);
+    const calculateSliderSize = useCallback(() => {
+        if (!smallSlider.current && smallImageWidth.current
+            && smallImageWidth.current.length > 2) {
+            return
+        }
+
+        const firstLeft = smallSliderImages.current[0].getBoundingClientRect().left;
+        const secondLeft = smallSliderImages.current[1].getBoundingClientRect().left;
+        const lastRight = smallSliderImages
+            .current[smallSliderImages.current.length - 1]
+            .getBoundingClientRect().right;
+
+        smallImageWidth.current = secondLeft - firstLeft;
+        let imagesWidth = lastRight - firstLeft;
+        maxSmallOffset.current = smallSlider.current.offsetWidth - imagesWidth;
+
+        setXPosition(calculateXPosition(index));
+    }, [calculateXPosition, index]);
+
+    useEffect(() => {
+        calculateSliderSize();
+        window.addEventListener('resize', calculateSliderSize);
+    }, []);
 
     const setIndexAndPosition = (newIndex) => {
         setIndex(newIndex);
-        setXPosition(Math.min(0, Math.max(
-            -(newIndex - 1) * 35, maxSmallOffset)));
+        setXPosition(calculateXPosition(newIndex));
     };
 
     const handleClickPrev = () => {
@@ -71,10 +100,11 @@ const Carousel = (props) => {
                 </div>
             </div>
             <div className={style.smallWrapper}>
-                <SmallSlider xPosition={xPosition} className={style.ratioSet}>
+                <SmallSlider xPosition={xPosition} ref={smallSlider}>
                     {props.images.map((image, i) => (
                         <div className={`${style.cover} ${style.coveredImage}`}
-                             key={i} onClick={() => setIndexAndPosition(i)}>
+                             key={i} onClick={() => setIndexAndPosition(i)}
+                             ref={(el) => (smallSliderImages.current[i] = el)}>
                             <img src={image} alt={image}/>
                             <div className={`${style.blurImage} ${index === i ? '' : 'hidden'}`}/>
                         </div>

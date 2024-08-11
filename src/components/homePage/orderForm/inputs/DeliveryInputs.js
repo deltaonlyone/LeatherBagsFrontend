@@ -1,11 +1,16 @@
-import React, {useCallback, useRef, useState} from "react";
-import axios from "axios";
-import styles from "./OrderForm.module.css";
-import DropdownList from "./inputs/DropdownList";
+import React, {useCallback, useEffect, useRef, useState} from "react";
+import styles from "../OrderForm.module.css";
+import DropdownList from "./DropdownList";
+import {estimateDeliveryPrice, loadCities, loadDepartments} from "../../../../services/NovaApiService";
 
 const pageLimit = 15;
 
-const DeliveryInputs = ({hasError, checkError, city, setCity, department, setDepartment}) => {
+const DeliveryInputs = ({
+                            city, setCity,
+                            department, setDepartment,
+                            setPrice, packagePrice,
+                            errors, setErrors, submitting
+                        }) => {
     const [citySuggestions, setCitySuggestions] = useState([]);
     let cityPage = useRef(1);
     let cityHasNext = useRef(true);
@@ -21,17 +26,8 @@ const DeliveryInputs = ({hasError, checkError, city, setCity, department, setDep
         }
         if (cityName) {
             try {
-                const response = await axios.post('https://api.novaposhta.ua/v2.0/json/', {
-                    apiKey: 'ad9f19d77f0329680046910f08946c8f',
-                    modelName: 'AddressGeneral',
-                    calledMethod: 'searchSettlements',
-                    methodProperties: {
-                        CityName: cityName,
-                        Limit: pageLimit,
-                        Page: cityPage.current,
-                        Warehouse: 1
-                    }
-                });
+                const response = await loadCities(cityName, cityPage.current, pageLimit);
+
                 setCitySuggestions([...(refresh ? [] : citySuggestions),
                     ...response.data.data[0].Addresses.map(v => {
                         return {
@@ -39,6 +35,7 @@ const DeliveryInputs = ({hasError, checkError, city, setCity, department, setDep
                             value: v.DeliveryCity
                         }
                     })]);
+
                 cityHasNext.current = response.data.data[0].TotalCount > pageLimit * cityPage.current;
             } catch (error) {
                 console.error('Error fetching city data:', error);
@@ -47,6 +44,11 @@ const DeliveryInputs = ({hasError, checkError, city, setCity, department, setDep
             setCitySuggestions([]);
         }
     }, [citySuggestions]);
+    const checkPrice = useCallback(async (cityRef) => {
+        const response = await estimateDeliveryPrice(cityRef, packagePrice);
+
+        setPrice(Math.ceil(response.data.data[0].Cost));
+    }, [setPrice, packagePrice]);
 
     const handleCityChange = useCallback(async (e) => {
         if (city.title !== e.title) {
@@ -56,7 +58,10 @@ const DeliveryInputs = ({hasError, checkError, city, setCity, department, setDep
             });
         }
         await loadCitySuggestions(e.title, true);
-    }, [loadCitySuggestions, city.title, setCity]);
+        if (e.value) {
+            await checkPrice(e.value);
+        }
+    }, [loadCitySuggestions, city.title, setCity, checkPrice]);
 
     const handleCityScrollDown = useCallback(() => {
         loadCitySuggestions(city.title, false);
@@ -66,7 +71,7 @@ const DeliveryInputs = ({hasError, checkError, city, setCity, department, setDep
     let departmentPage = useRef(1);
     let departmentHasNext = useRef(true);
 
-    const loadDepartmentSuggestions = useCallback(async (departmentNum, refresh) => {
+    const loadDepartmentSuggestions = useCallback(async (departmentName, refresh) => {
         if (refresh) {
             departmentPage.current = 1;
             departmentHasNext.current = true;
@@ -78,22 +83,8 @@ const DeliveryInputs = ({hasError, checkError, city, setCity, department, setDep
 
         if (city.value) {
             try {
-                const properties = {
-                    Page: departmentPage.current,
-                    Limit: pageLimit,
-                    CityRef: city.value,
-                    Language: 'UA'
-                };
-                if (departmentNum) {
-                    properties.WarehouseId = departmentNum;
-                }
-
-                const response = await axios.post('https://api.novaposhta.ua/v2.0/json/', {
-                    apiKey: 'ad9f19d77f0329680046910f08946c8f',
-                    modelName: 'AddressGeneral',
-                    calledMethod: 'getWarehouses',
-                    methodProperties: properties
-                });
+                const response = await loadDepartments(city.value,
+                    departmentName, departmentPage.current, pageLimit);
 
                 setDepartmentSuggestions([...(refresh ? [] : departmentSuggestions),
                     ...response.data.data.map(v => {
@@ -119,8 +110,18 @@ const DeliveryInputs = ({hasError, checkError, city, setCity, department, setDep
     }, [loadDepartmentSuggestions, department.title, setDepartment]);
 
     const handleDepartmentScrollDown = useCallback(() => {
-        loadDepartmentSuggestions(department.title, false);
+        loadDepartmentSuggestions(department.title, false)
+            .then();
     }, [loadDepartmentSuggestions, department.title]);
+
+    useEffect(() => {
+        setDepartment({
+            title: '',
+            value: ''
+        })
+        loadDepartmentSuggestions(department.title, true)
+            .then();
+    }, [city.value]);
 
     return (
         <div className={`column ${styles.oneColumn}  ${styles.centeredRow}`}>
@@ -136,8 +137,9 @@ const DeliveryInputs = ({hasError, checkError, city, setCity, department, setDep
                     options={citySuggestions}
                     onChange={handleCityChange}
                     onScrollDown={handleCityScrollDown}
-                    checkErrorTrigger={hasError}
-                    setError={checkError}
+                    errors={errors}
+                    setErrors={setErrors}
+                    submitting={submitting}
                 />
             </div>
             <div className={`${styles.formRow} ${styles.inputRow}`}>
@@ -149,8 +151,9 @@ const DeliveryInputs = ({hasError, checkError, city, setCity, department, setDep
                     options={departmentSuggestions}
                     onChange={handleDepartmentChange}
                     onScrollDown={handleDepartmentScrollDown}
-                    checkErrorTrigger={hasError}
-                    setError={checkError}
+                    errors={errors}
+                    setErrors={setErrors}
+                    submitting={submitting}
                     disabled={!city.value}
                 />
             </div>

@@ -1,50 +1,53 @@
 import styles from './Input.module.css';
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import FormInput from "./FormInput";
+import {useSetupError} from "./InputUtils";
 
-const InputName = ({name, placeholder, value, setValue, setError, checkErrorTrigger}) => {
-    const [error, setErrorObject] = useState({
-        hasError: false,
-        message: ''
-    });
+const InputName = ({name, placeholder, value, setValue, setErrors, submitting}) => {
+    const [error, setAllErrors] = useSetupError(name, setErrors);
 
     const handleInput = (event) => {
         setValue(event.target.value);
     }
 
-    const checkError = () => {
+    const checkError = useCallback(() => {
         if (!value) {
-            setErrorObject({
+            setAllErrors({
                 hasError: true,
                 message: "Поле є обов'язковим"
             })
-            return true;
-        } else if (value.match(/[^АаБбВвГгҐґДдЕеЄєЖжЗзИиІіЇїЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщьЮюЯя' \-]/g)) {
-            setErrorObject({
+            return;
+        } else if (value.match(/[^АаБбВвГгҐґДдЕеЄєЖжЗзИиІіЇїЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщьЮюЯя '-]/g)) {
+            setAllErrors({
                 hasError: true,
                 message: "Поле може містити тільки українські літери"
             })
-            return true;
+            return;
+        } else if (value.trim() !== value) {
+            setAllErrors({
+                hasError: true,
+                message: "Поле не може містити пробіли на початку або кінці"
+            })
+            return;
         } else if (value.length >= 30) {
-            setErrorObject({
+            setAllErrors({
                 hasError: true,
                 message: "Поле може містити до 30 символів"
             })
-            return true;
+            return;
         }
 
-        setErrorObject({
+        setAllErrors({
             hasError: false,
             message: ''
-        });
-        return false;
-    }
+        })
+    }, [value, setAllErrors])
 
     useEffect(() => {
-        if (checkErrorTrigger) {
-            setError(checkError());
+        if (submitting) {
+            checkError();
         }
-    }, [checkErrorTrigger]);
+    }, [submitting, checkError]);
 
     const [focused, setFocused] = useState(false);
 

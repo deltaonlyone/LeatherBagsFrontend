@@ -1,12 +1,12 @@
 import styles from './OrderInfo.module.css'
 
-const OrderInfo = (props) => {
+const OrderInfo = ({img, title, text}) => {
     return (
         <div className={styles.orderInfo}>
-            <h4>{props.title}</h4>
+            <h4>{title}</h4>
             <div className={`row ${styles.descriptionContainer}`}>
-                <img src={props.img} alt={props.img}/>
-                <p>{props.text}</p>
+                <img src={img} alt={img}/>
+                <p>{text}</p>
             </div>
         </div>
     )

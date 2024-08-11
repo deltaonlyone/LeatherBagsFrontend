@@ -1,4 +1,4 @@
-import {useState, useRef, useEffect, useCallback} from 'react'
+import {useCallback, useEffect, useRef, useState} from 'react'
 import styles from './InfiniteLooper.module.css';
 
 const InfiniteLoop = (props) => {
@@ -15,13 +15,15 @@ const InfiniteLoop = (props) => {
         const instanceWidth = width / innerRef.current.children.length;
 
         if (width < parentWidth + instanceWidth) {
-            setInstanceCount(instanceCount + Math.ceil(parentWidth / width));
+            setInstanceCount(instanceCount + Math.ceil(parentWidth / width) + 3);
         }
     }, [instanceCount]);
 
     useEffect(() => {
         setupInstances();
     }, []);
+
+    window.addEventListener('resize', setupInstances);
 
     useEffect(() => {
         setAnimationEnabled(true);

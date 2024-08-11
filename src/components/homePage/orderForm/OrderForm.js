@@ -1,62 +1,54 @@
 import styles from './OrderForm.module.css'
-import React, {useCallback, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import InputPhoneNum from "./inputs/InputPhoneNum";
 import InputName from "./inputs/InputName";
 import DropdownList from "./inputs/DropdownList";
-import DeliveryInputs from "./DeliveryInputs";
+import DeliveryInputs from "./inputs/DeliveryInputs";
+import {
+    colorOptions,
+    keyHolderOptions,
+    optionContainsValue,
+    sizeOptions,
+    typeOptions
+} from "../../../services/BagsOptions";
+import {bagPrice} from "../../../services/BagsPrices";
+import {handleBasicChange} from "./inputs/InputUtils";
+import {requestBag} from "../../../services/ApiService";
 
-const OrderForm = () => {
+const OrderForm = ({pType, pSize, pColor, pKeyHolder, setResult}) => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [middleName, setMiddleName] = useState('');
     const [phoneNum, setPhoneNum] = useState('+380');
 
-    const types = [{
-        title: 'Сумка бананка з натуральної шкіри',
-        value: 'Сумка бананка з натуральної шкіри'
-    }, {
-        title: 'Сумка бананка з натуральної шкіри з срібним замком',
-        value: 'Сумка бананка з натуральної шкіри з срібним замком'
-    }];
-    const [type, setType] = useState(types[0]);
-    const handleTypeChange = (e) => {
-        setType({
-            title: e.title,
-            value: e.title
-        });
-    }
+    const [types] = useState(typeOptions());
+    const [type, setType] = useState(pType ? pType : types[0]);
 
-    const sizes = [{
-        value: 'L',
-        label: 'Стандартний L'
-    }, {
-        value: 'XL',
-        label: 'Великий XL'
-    }];
-    const [size, setSize] = useState(sizes[0].value);
+    const [sizes, setSizes] = useState(sizeOptions(type.value));
+    const [size, setSize] = useState(pSize ? pSize : sizes[0]);
 
-    const colors = [{
-        title: 'Чорний',
-        value: 'Чорний'
-    }, {
-        title: 'Синій',
-        value: 'Синій'
-    }, {
-        title: 'Червоний',
-        value: 'Червоний'
-    }, {
-        title: 'Коричневий',
-        value: 'Коричневий'
-    }];
-    const [color, setColor] = useState(colors[0]);
-    const handleColorChange = (e) => {
-        setColor({
-            title: e.title,
-            value: e.title
-        });
-    }
+    const [colors, setColors] = useState(colorOptions(type.value, size.value));
+    const [color, setColor] = useState(pColor ? pColor : colors[0]);
 
-    const [keyHolder, setKeyHolder] = useState(true);
+    const [keyHolderStates] = useState(keyHolderOptions());
+    const [keyHolder, setKeyHolder] = useState(pKeyHolder ? pKeyHolder : keyHolderStates[0]);
+
+    useEffect(() => {
+        const sizes = sizeOptions(type.value);
+        setSizes(sizes);
+        if (!optionContainsValue(sizes, size)) {
+            setSize(sizes[0]);
+        }
+    }, [type.value]);
+
+    useEffect(() => {
+        const colors = colorOptions(type.value, size.value);
+        setColors(colors);
+        if (!optionContainsValue(colors, color)) {
+            setColor(colors[0]);
+        }
+    }, [type.value, size.value]);
+
     const [city, setCity] = useState({
         title: '',
         value: null
@@ -65,30 +57,69 @@ const OrderForm = () => {
         title: '',
         value: null
     });
+    const [deliveryPrice, setDeliveryPrice] = useState(0);
 
+    const [price, setPrice] = useState(bagPrice(type.value, size.value, keyHolder.value));
+    useEffect(() => {
+        setPrice(bagPrice(type.value, size.value, keyHolder.value))
+    }, [type.value, size.value, keyHolder.value]);
 
-    const [hasError, setHasError] = useState(false);
-    const [trigger, setTrigger] = useState(false);
-    const checkError = useCallback((error) => {
-        setHasError(hasError || error);
-    }, [hasError]);
+    const formFields = [
+        'firstName',
+        'lastName',
+        'middleName',
+        'num',
+        'type',
+        'fill',
+        'keyHolder',
+        'size',
+        'place',
+        'department'
+    ];
+    const [submitting, setSubmitting] = useState(0);
+    const [errors, setErrors] = useState({});
 
     const sendData = (event) => {
         event.preventDefault();
-        setTrigger(true);
-        console.log({
-            firstName: firstName,
-            lastName: lastName,
-            middleName: middleName,
-            phoneNum: phoneNum,
-            type: type,
-            size: size,
-            color: color.value,
-            keyHolder: keyHolder,
-            city: city.title,
-            department: department.value
-        })
+        const newErrors = {};
+        for (const field of formFields) {
+            newErrors[field] = true;
+        }
+        setErrors(newErrors);
+        setSubmitting(2);
     };
+
+    useEffect(() => {
+        if (submitting === 2) {
+            setSubmitting(1);
+        } else if (submitting === 1) {
+            setResult('loading');
+            if (Object.keys(errors).length === 0) {
+                requestBag({
+                    firstName: firstName,
+                    lastName: lastName,
+                    middleName: middleName,
+                    phoneNum: phoneNum,
+                    type: type.title,
+                    size: size.value,
+                    color: color.value,
+                    keyHolder: keyHolder.value,
+                    city: city.title,
+                    department: department.value,
+                    price: price + deliveryPrice
+                })
+                    .then(r => setResult('ok'))
+                    .catch(e => setResult('error'));
+            }
+            setSubmitting(0);
+        }
+    }, [errors, submitting,
+        firstName, lastName,
+        middleName, phoneNum,
+        type, size,
+        color.value, keyHolder,
+        city.title, department.value,
+        price, deliveryPrice]);
 
     return (
         <form className={`column ${styles.orderForm}`}>
@@ -101,26 +132,28 @@ const OrderForm = () => {
                 <div className={styles.twoColumns}>
                     <InputName name='firstName' placeholder="Ім'я"
                                value={firstName} setValue={setFirstName}
-                               checkErrorTrigger={trigger}
-                               setError={checkError}/>
+                               setErrors={setErrors} submitting={submitting}
+                    />
                 </div>
                 <div className={styles.twoColumns}>
                     <InputName name='lastName' placeholder='Прізвище'
                                value={lastName} setValue={setLastName}
-                               checkErrorTrigger={trigger}
-                               setError={checkError}/>
+                               setErrors={setErrors} submitting={submitting}
+                    />
                 </div>
             </div>
             <div className={`${styles.formRow} ${styles.inputRow}`}>
                 <div className={styles.twoColumns}>
                     <InputName name='middleName' placeholder='По батькові'
                                value={middleName} setValue={setMiddleName}
-                               checkErrorTrigger={trigger}
-                               setError={checkError}/>
+                               setErrors={setErrors} submitting={submitting}
+                    />
                 </div>
                 <div className={styles.twoColumns}>
-                    <InputPhoneNum value={phoneNum} setValue={setPhoneNum}
-                                   checkErrorTrigger={trigger} setError={checkError}/>
+                    <InputPhoneNum name='num'
+                                   value={phoneNum} setValue={setPhoneNum}
+                                   setErrors={setErrors} submitting={submitting}
+                    />
                 </div>
             </div>
             <div className={styles.formRow}>
@@ -130,56 +163,46 @@ const OrderForm = () => {
                 <div className={styles.oneColumn}>
                     <DropdownList name='type' placeholder='Тип cумки'
                                   value={type} editable={false}
-                                  options={types} onChange={handleTypeChange}
-                                  checkErrorTrigger={hasError} setError={checkError}
+                                  options={types} onChange={handleBasicChange(setType)}
+                                  setErrors={setErrors} submitting={submitting}
                     />
                 </div>
             </div>
             <div className={styles.formRow}>
-                <div className={styles.twoColumns}>
-                    <h5>Оберіть розмір</h5>
-                </div>
-                <div className={styles.twoColumns}>
-                    <h5>Оберіть колір</h5>
-                </div>
+                <h5>Додаткові параметри</h5>
             </div>
             <div className={`${styles.formRow} ${styles.inputRow}`}>
                 <div className={styles.twoColumns}>
-                    <fieldset>
-                        {sizes.map((s, i) => (
-                            <div className={styles.fieldsetRow} key={i}
-                                 onClick={() => setSize(s.value)}>
-                                <input type='radio' name='size' value={s.value}
-                                       onChange={() => setSize(s.value)}
-                                       checked={size === s.value}/>
-                                <label htmlFor='size'>{s.label}</label>
-                            </div>
-                        ))}
-                    </fieldset>
+                    <DropdownList name='fill' placeholder='Колір'
+                                  value={color} editable={false}
+                                  options={colors} onChange={handleBasicChange(setColor)}
+                                  setErrors={setErrors} submitting={submitting}
+                    />
                 </div>
                 <div className={styles.twoColumns}>
-                    <div className='column'>
-                        <DropdownList name='fill' placeholder='Колір'
-                                      value={color} editable={false}
-                                      options={colors} onChange={handleColorChange}
-                                      checkErrorTrigger={hasError} setError={checkError}
-                        />
-                        <div className={styles.inputWrapper}>
-                            <div className={styles.fieldsetRow}
-                                 onClick={() => setKeyHolder(!keyHolder)}>
-                                <input type='checkbox' name='keyHolder' checked={keyHolder}
-                                       onChange={() => {
-                                       }}/>
-                                <label htmlFor='keyHolder'>Ключниця</label>
-                            </div>
-                        </div>
-                    </div>
+                    <DropdownList name='keyHolder' placeholder='Ключниця'
+                                  value={keyHolder} editable={false}
+                                  options={keyHolderStates} onChange={handleBasicChange(setKeyHolder)}
+                                  setErrors={setErrors} submitting={submitting}
+                    />
                 </div>
             </div>
-            <DeliveryInputs hasError={hasError} checkError={checkError}
-                            city={city} setCity={setCity}
-                            department={department} setDepartment={setDepartment}/>
-            <button type='submit' onClick={sendData} disabled={hasError}>Замовити</button>
+            <div className={`${styles.formRow} ${styles.inputRow}`}>
+                <DropdownList name='size' placeholder='Розмір'
+                              value={size} editable={false}
+                              options={sizes} onChange={handleBasicChange(setSize)}
+                              setErrors={setErrors} submitting={submitting}
+                />
+            </div>
+            <DeliveryInputs city={city} setCity={setCity}
+                            department={department} setDepartment={setDepartment}
+                            setPrice={setDeliveryPrice} packagePrice={price}
+                            setErrors={setErrors} submitting={submitting}
+            />
+            <div className={styles.price}>
+                <h3>Ціна замовлення: {price}+{deliveryPrice}={price + deliveryPrice}₴</h3>
+            </div>
+            <button type='submit' onClick={sendData}>Замовити</button>
         </form>
     );
 };

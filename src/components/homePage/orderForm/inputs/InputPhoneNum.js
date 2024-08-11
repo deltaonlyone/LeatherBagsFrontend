@@ -1,14 +1,12 @@
 import styles from './Input.module.css';
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import FormInput from "./FormInput";
+import {useSetupError} from "./InputUtils";
 
-const InputPhoneNum = ({value, setValue, setError, checkErrorTrigger}) => {
-    const [error, setErrorObject] = useState({
-        hasError: false,
-        message: ''
-    });
+const InputPhoneNum = ({name, value, setValue, setErrors, submitting}) => {
+    const [error, setAllErrors] = useSetupError(name, setErrors);
+
     const [displayValue, setDisplayValue] = useState('+380');
-
     const handleInput = (event) => {
         let rawValue = event.target.value.substring(1)
             .replace(/\D/g, '');
@@ -36,27 +34,26 @@ const InputPhoneNum = ({value, setValue, setError, checkErrorTrigger}) => {
         setDisplayValue(formatedValue);
     }
 
-    const checkError = () => {
+    const checkError = useCallback(() => {
         if (!value || value.length < 13) {
-            setErrorObject({
+            setAllErrors({
                 hasError: true,
                 message: 'Номер телефону введено неправильно'
             });
-            return true;
+            return;
         }
 
-        setErrorObject({
+        setAllErrors({
             hasError: false,
             message: ''
         });
-        return false;
-    }
+    }, [value, setAllErrors])
 
     useEffect(() => {
-        if (checkErrorTrigger) {
-            setError(checkError());
+        if (submitting) {
+            checkError();
         }
-    }, [checkErrorTrigger]);
+    }, [submitting, checkError]);
 
     const [focused, setFocused] = useState(false);
 

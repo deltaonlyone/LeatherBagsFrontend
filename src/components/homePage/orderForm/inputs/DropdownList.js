@@ -1,16 +1,15 @@
 import styles from './Input.module.css';
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
+import {useSetupError} from "./InputUtils";
 
 const DropdownList = ({
                           name, placeholder, value,
                           editable, options, onChange,
-                          setError, checkErrorTrigger,
-                          disabled, onScrollDown
+                          disabled, onScrollDown,
+                          setErrors, submitting
                       }) => {
-    const [error, setErrorObject] = useState({
-        hasError: false,
-        message: ''
-    });
+    const [error, setAllErrors] = useSetupError(name, setErrors || (() => {}));
+    const checkValue = useRef(value.value);
 
     const [hovered, setHovered] = useState(false);
     const [focused, setFocused] = useState(false);
@@ -36,6 +35,7 @@ const DropdownList = ({
         if (event.key === 'Enter') {
             event.preventDefault();
             event.stopPropagation();
+            checkValue.current = options[index].value;
             onChange(options[index]);
         } else if (event.key === 'ArrowUp' && index > 0) {
             event.preventDefault();
@@ -50,27 +50,26 @@ const DropdownList = ({
         }
     }
 
-    const checkError = () => {
-        if (value.value === null) {
-            setErrorObject({
+    const checkError = useCallback(() => {
+        if (checkValue.current === null) {
+            setAllErrors({
                 hasError: true,
                 message: "Поле є обов'язковим"
             })
-            return true;
+            return;
         }
 
-        setErrorObject({
+        setAllErrors({
             hasError: false,
             message: ''
         });
-        return false;
-    }
+    }, [setAllErrors]);
 
     useEffect(() => {
-        if (checkErrorTrigger) {
-            setError(checkError());
+        if (submitting) {
+            checkError();
         }
-    }, [checkErrorTrigger]);
+    }, [submitting, checkError]);
 
     const input = useRef();
     const onWrapperClick = () => {
@@ -100,17 +99,16 @@ const DropdownList = ({
                         ${disabled ? styles.disabledWrapper : ''}`}>
                     <input type='text' name={name}
                            className={`${styles.listInput} ${editable ? '' : styles.unEditable}`}
-                           onChange={(e) => onChange({
-                               title: e.target.value,
-                               value: null
-                           })}
-                           value={value.title}
-                           onFocus={(e) => {
-                               setFocused(true);
+                           onChange={(e) => {
                                onChange({
                                    title: e.target.value,
                                    value: null
                                });
+                               checkValue.current = null;
+                           }}
+                           value={value.title}
+                           onFocus={() => {
+                               setFocused(true);
                            }}
                            onBlur={() => {
                                setFocused(false);
@@ -125,21 +123,21 @@ const DropdownList = ({
                 </div>
                 <div className={`${styles.dropdown_content}
                  ${isShown() ? styles.showContent : ''}
-                 ${error.hasError ? styles.dropdownError : ''}`}>
+                 ${error.hasError ? styles.dropdownError : styles.dropdownBorder}`}>
                     <div className={styles.scrollable} ref={scrollableRef}
                          onScroll={onScrollDown ? onScroll : () => {
                          }}>
                         {options.map((c, i) => (
                             <option className={`${styles.dropdown_option} ${i === index ? styles.hoveredOption : ''}`}
                                     value={c.title} key={i}
-                                    onClick={(e) => {
-                                        e.preventDefault();
+                                    onMouseDown={(e) => {
                                         e.stopPropagation();
                                         onChange({
                                             title: c.title,
                                             value: c.value
                                         });
-                                        checkError();
+                                        checkValue.current = c.value;
+                                        setFocused(false);
                                     }}
                                     onMouseEnter={() => setIndex(i)}>
                                 {c.title}
