@@ -93,8 +93,8 @@ const OrderForm = ({pType, pSize, pColor, pKeyHolder, setResult}) => {
         if (submitting === 2) {
             setSubmitting(1);
         } else if (submitting === 1) {
-            setResult('loading');
             if (Object.keys(errors).length === 0) {
+                setResult('loading');
                 requestBag({
                     firstName: firstName,
                     lastName: lastName,
