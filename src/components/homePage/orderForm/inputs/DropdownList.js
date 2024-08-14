@@ -11,6 +11,7 @@ const DropdownList = ({
     const [error, setAllErrors] = useSetupError(name, setErrors || (() => {
     }));
     const checkValue = useRef(value.value);
+    const [changed, setChanged] = useState(false);
     const blurPrevented = useRef(false);
 
     const [focused, setFocused] = useState(false);
@@ -38,6 +39,7 @@ const DropdownList = ({
             event.stopPropagation();
             checkValue.current = options[index].value;
             onChange(options[index]);
+            setChanged(true);
             checkError();
         } else if (event.key === 'ArrowUp' && index > 0) {
             event.preventDefault();
@@ -79,20 +81,28 @@ const DropdownList = ({
         if (input.current) {
             input.current.focus();
         }
-    }
+    };
+
+    const onWrapperLeave = (e) => {
+        if (changed && input.current) {
+            input.current.blur();
+        }
+    };
 
     const onScroll = (e) => {
         const element = e.target;
         if (Math.abs(element.scrollHeight - (element.scrollTop + element.clientHeight)) <= 1) {
             onScrollDown();
         }
-    }
+    };
+
 
     return (
         <div className={styles.inputColumn}>
             <div className={styles.dropdown}
                  onKeyDown={handleKeyDown}
-                 onClick={onWrapperClick}>
+                 onClick={onWrapperClick}
+                 onMouseLeave={onWrapperLeave}>
                 <div
                     className={`row ${styles.inputWrapper}
                         ${error.hasError ? isShown() ? styles.dropdownErrorWrapper : styles.errorWrapper : ''}
@@ -117,6 +127,7 @@ const DropdownList = ({
                                    return;
                                }
                                setFocused(false);
+                               setChanged(false);
                                checkError();
                            }}
                            placeholder={placeholder}
@@ -142,6 +153,7 @@ const DropdownList = ({
                                             value: c.value
                                         });
                                         checkValue.current = c.value;
+                                        setChanged(true);
                                         checkError();
                                     }}
                                     onMouseEnter={() => setIndex(i)}>
