@@ -8,13 +8,14 @@ const DropdownList = ({
                           disabled, onScrollDown,
                           setErrors, submitting
                       }) => {
-    const [error, setAllErrors] = useSetupError(name, setErrors || (() => {}));
+    const [error, setAllErrors] = useSetupError(name, setErrors || (() => {
+    }));
     const checkValue = useRef(value.value);
+    const blurPrevented = useRef(false);
 
-    const [hovered, setHovered] = useState(false);
     const [focused, setFocused] = useState(false);
     const isShown = () => {
-        return !disabled && (hovered || focused);
+        return !disabled && focused;
     }
 
     const [index, setIndex] = useState(0);
@@ -37,6 +38,7 @@ const DropdownList = ({
             event.stopPropagation();
             checkValue.current = options[index].value;
             onChange(options[index]);
+            checkError();
         } else if (event.key === 'ArrowUp' && index > 0) {
             event.preventDefault();
             event.stopPropagation();
@@ -72,7 +74,8 @@ const DropdownList = ({
     }, [submitting, checkError]);
 
     const input = useRef();
-    const onWrapperClick = () => {
+    const onWrapperClick = (e) => {
+        e.stopPropagation();
         if (input.current) {
             input.current.focus();
         }
@@ -89,8 +92,6 @@ const DropdownList = ({
         <div className={styles.inputColumn}>
             <div className={styles.dropdown}
                  onKeyDown={handleKeyDown}
-                 onMouseEnter={() => setHovered(true)}
-                 onMouseLeave={() => setHovered(false)}
                  onClick={onWrapperClick}>
                 <div
                     className={`row ${styles.inputWrapper}
@@ -111,6 +112,10 @@ const DropdownList = ({
                                setFocused(true);
                            }}
                            onBlur={() => {
+                               if (blurPrevented.current) {
+                                   blurPrevented.current = false;
+                                   return;
+                               }
                                setFocused(false);
                                checkError();
                            }}
@@ -130,14 +135,14 @@ const DropdownList = ({
                         {options.map((c, i) => (
                             <option className={`${styles.dropdown_option} ${i === index ? styles.hoveredOption : ''}`}
                                     value={c.title} key={i}
-                                    onMouseDown={(e) => {
-                                        e.stopPropagation();
+                                    onMouseDown={() => {
+                                        blurPrevented.current = true;
                                         onChange({
                                             title: c.title,
                                             value: c.value
                                         });
                                         checkValue.current = c.value;
-                                        setFocused(false);
+                                        checkError();
                                     }}
                                     onMouseEnter={() => setIndex(i)}>
                                 {c.title}
