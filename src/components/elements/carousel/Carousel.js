@@ -36,24 +36,24 @@ const Carousel = ({images}) => {
         maxSmallOffset.current = smallSlider.current.offsetWidth - imagesWidth;
     }, []);
 
-    const calculateXPosition = useCallback((index) => {
+    const calculateSmallXPosition = useCallback((index) => {
         return Math.min(0, Math.max(
             -(index - 1) * smallImageWidth.current, maxSmallOffset.current));
-    }, []);
-
-    useEffect(() => {
-        calculateSliderSize();
-        window.addEventListener('resize', () => {
-            calculateSliderSize();
-            setSmallXPosition(calculateXPosition(index));
-        });
     }, []);
 
     const setIndexAndPosition = (newIndex) => {
         setIndex(newIndex);
         setXPosition(newIndex * 100);
-        setSmallXPosition(calculateXPosition(newIndex));
+        setSmallXPosition(calculateSmallXPosition(newIndex));
     };
+
+    useEffect(() => {
+        calculateSliderSize();
+        window.addEventListener('resize', () => {
+            calculateSliderSize();
+            setIndexAndPosition(index);
+        });
+    }, []);
 
     const handleClickPrev = (e) => {
         e.stopPropagation();
@@ -74,13 +74,15 @@ const Carousel = ({images}) => {
     };
 
     const mouseStart = useRef(0);
+    const indexStart = useRef(0);
     const [dragged, setDragged] = useState(false);
 
     const lastUpdateTime = useRef(new Date());
     const throttleInterval = 100;
 
     const handleSliderDragStart = (e) => {
-        e.dataTransfer.setDragImage(e.target, window.outerWidth, window.outerHeight);
+        e.stopPropagation();
+        e.dataTransfer.setDragImage(new Image(), 0, 0);
         startDragging(e.clientX);
     };
 
@@ -89,70 +91,82 @@ const Carousel = ({images}) => {
     };
 
     const handleSliderDrag = (e) => {
-        const currentTime = new Date();
-        if (currentTime - lastUpdateTime.current > throttleInterval) {
-            dragPosX(mouseStart.current - e.clientX);
-            lastUpdateTime.current = currentTime;
-        }
+        dragPosX(e.clientX);
     };
 
     const handleSliderTouchMove = (e) => {
-        const currentTime = new Date();
-        if (currentTime - lastUpdateTime.current > throttleInterval) {
-            dragPosX(mouseStart.current - e.changedTouches[0].clientX);
-            lastUpdateTime.current = currentTime;
-        }
+        dragPosX(e.changedTouches[0].clientX);
     };
 
-    const handleSliderDragEnd = (e) => {
-        stopDragging(e.clientX);
+    const handleSliderDragEnd = () => {
+        stopDragging();
     };
 
-    const handleSliderTouchEnd = (e) => {
-        stopDragging(e.changedTouches[0].clientX);
+    const handleSliderTouchEnd = () => {
+        stopDragging();
     };
 
     const startDragging = (x) => {
         setDragged(true);
         mouseStart.current = x;
+        indexStart.current = index;
     }
 
-    const dragPosX = (diff) => {
-        const dragX = index + diff / mainWrapperWidth.current;
-        setXPosition(Math.max(0,
-            Math.min(dragX, images.length - 1)) * 100);
+    const dragPosX = (x) => {
+        const currentTime = new Date();
+        if (currentTime - lastUpdateTime.current > throttleInterval) {
+            setDraggingIndex(x);
+
+            const dragX = indexStart.current + (mouseStart.current - x) / mainWrapperWidth.current;
+            setXPosition(Math.max(0,
+                Math.min(dragX, images.length - 1)) * 100);
+
+            lastUpdateTime.current = currentTime;
+        }
     };
 
-    const stopDragging = (mouseEnd) => {
+    const setDraggingIndex = (x) => {
+        const indexDiff = Math.round((mouseStart.current - x) / mainWrapperWidth.current);
+        const index = Math.max(0, Math.min(
+            indexStart.current + indexDiff, images.length - 1))
+
+        setIndex(index);
+        setSmallXPosition(calculateSmallXPosition(index));
+    }
+
+    const stopDragging = () => {
         setDragged(false);
-        let indexDiff = Math.round((mouseStart.current - mouseEnd) / mainWrapperWidth.current);
-        setIndexAndPosition(Math.max(0,
-            Math.min(index + indexDiff, images.length - 1)));
+        setIndexAndPosition(index);
     }
 
     return (
         <div className={'column not-draggable'}>
             <div className={`${styles.aspectRatioBox} ${styles.ratio120}`}>
                 <div className={`${styles.mainWrapper} ${styles.coveredImage}`}
+                     ref={mainWrapper} draggable='true'
                      onDragStart={handleSliderDragStart}
                      onDrag={handleSliderDrag}
                      onDragEnd={handleSliderDragEnd}
                      onTouchStart={handleSliderTouchStart}
                      onTouchMove={handleSliderTouchMove}
-                     onTouchEnd={handleSliderTouchEnd}
-                     ref={mainWrapper}>
+                     onTouchEnd={handleSliderTouchEnd}>
                     <div className={styles.mainSlider} style={{
                         transform: `translateX(${-xPosition}%)`,
-                        transition: `transform ${dragged ? `${(throttleInterval / 1000).toFixed(2)}s linear` : '0.6s ease-in-out'}`
+                        transition: `transform ${dragged ? `${(throttleInterval / 1000).toFixed(2)}s linear` 
+                            : '0.6s ease-in-out'}`
                     }}>
                         {images.map((image, i) => (
-                            <img src={image} alt={image} key={i}/>
+                            <img draggable='false' src={image} alt={image} key={i}/>
                         ))}
                     </div>
                 </div>
-                <img className={`${styles.arrow} ${styles.arrowLeft}`} src='/home/arrow.png' alt='arrow'
+                <img className={`${styles.arrow} ${styles.arrowLeft}`}
+                     src='/home/arrow.png' alt='arrow'
+                     draggable='false'
                      onClick={handleClickPrev}/>
-                <img className={`${styles.arrow} ${styles.arrowRight}`} src='/home/arrow.png' alt='arrow'
+                <img className={`${styles.arrow} ${styles.arrowRight}`}
+                     src='/home/arrow.png' alt='arrow'
+                     draggable='false'
                      onClick={handleClickNext}/>
             </div>
             <div className={styles.smallWrapper}>
