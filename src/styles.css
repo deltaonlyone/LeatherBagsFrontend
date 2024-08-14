@@ -45,7 +45,7 @@ button:hover {
     display: none;
 }
 
-.non-draggable {
+.not-draggable {
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
@@ -55,6 +55,7 @@ button:hover {
     -webkit-user-select: auto;
     -ms-user-select: auto;
     user-select: auto;
+    pointer-events: auto;
 }
 
 .no-scroll {

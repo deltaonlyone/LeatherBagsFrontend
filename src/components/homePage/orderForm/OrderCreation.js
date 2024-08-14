@@ -4,7 +4,7 @@ import OrderForm from "./OrderForm";
 
 const OrderCreation = ({setResult}) => {
     return (
-        <div className={`centeredComponent non-draggable`}>
+        <div className={`centeredComponent not-draggable`}>
             <div className={`row ${styles.orderCreation}`}>
                 <div className={`column ${styles.infoContainer}`}>
                     <div className={styles.infoElement}>
