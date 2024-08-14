@@ -7,7 +7,7 @@ const ResultDialogs = ({result, setResult}) => {
     return (
         <ModalDialog isOpen={result} setOpen={() => setResult('')}
                      closeOnClick={result === 'loading'}>
-            <div className='non-draggable'>
+            <div className='not-draggable'>
                 {result === 'ok' ?
                     <OkDialog close={() => setResult('')}/> : ''
                 }
