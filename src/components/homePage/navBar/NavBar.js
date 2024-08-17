@@ -5,7 +5,7 @@ const NavBar = () => {
     return (
         <nav className={styles.navbar}>
             <label className={styles.burger} htmlFor="burger">
-                <input type="checkbox" id="burger" />
+                <input type="checkbox" id="burger"/>
                 <span></span>
                 <span></span>
                 <span></span>

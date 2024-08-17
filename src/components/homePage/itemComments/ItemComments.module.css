@@ -1,20 +1,20 @@
-.wrapper{
+.wrapper {
     padding: 0 15vw;
 
 }
 
-.imgWrap img{
+.imgWrap img {
     object-fit: cover;
     width: 70vw;
 }
 
-@media(max-width:1440px) {
-    .wrapper{
+@media (max-width: 1440px) {
+    .wrapper {
         padding: 0 13vw;
 
     }
 
-    .imgWrap img{
+    .imgWrap img {
         object-fit: cover;
         width: 74vw;
     }
@@ -22,39 +22,39 @@
 
 }
 
-@media(max-width:1280px) {
-    .wrapper{
+@media (max-width: 1280px) {
+    .wrapper {
         padding: 0 11vw;
 
     }
 
-    .imgWrap img{
+    .imgWrap img {
         object-fit: cover;
         width: 78vw;
     }
 
 }
 
-@media(max-width:1024px) {
-    .wrapper{
+@media (max-width: 1024px) {
+    .wrapper {
         padding: 0 9vw;
 
     }
 
-    .imgWrap img{
+    .imgWrap img {
         object-fit: cover;
         width: 82vw;
     }
 
 }
 
-@media(max-width:768px) {
-    .wrapper{
+@media (max-width: 768px) {
+    .wrapper {
         padding: 0 0vw;
 
     }
 
-    .imgWrap img{
+    .imgWrap img {
         object-fit: cover;
         width: 100%;
     }
@@ -62,24 +62,24 @@
 }
 
 
-@media(max-width:480px) {
-    .wrapper{
+@media (max-width: 480px) {
+    .wrapper {
 
     }
 
-    .imgWrap img{
+    .imgWrap img {
         object-fit: cover;
         width: 100%;
     }
 
 }
 
-@media(max-width:320px) {
-    .wrapper{
+@media (max-width: 320px) {
+    .wrapper {
 
     }
 
-    .imgWrap img{
+    .imgWrap img {
         object-fit: cover;
         width: 100%;
     }
