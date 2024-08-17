@@ -1,11 +1,11 @@
-.wrapper{
+.wrapper {
     background-color: var(--secondary-background-color);
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.text{
+.text {
     color: var(--main-background-color);
     padding: 10px 20px;
     font-weight: bold;

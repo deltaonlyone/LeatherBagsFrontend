@@ -2,7 +2,7 @@ import styles from './Login.module.css';
 
 const Login = () => {
 
-    return(
+    return (
         <div className={`${styles['login']}`}>Login</div>
     );
 }

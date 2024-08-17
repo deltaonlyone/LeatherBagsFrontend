@@ -152,7 +152,7 @@ const Carousel = ({images}) => {
                      onTouchEnd={handleSliderTouchEnd}>
                     <div className={styles.mainSlider} style={{
                         transform: `translateX(${-xPosition}%)`,
-                        transition: `transform ${dragged ? `${(throttleInterval / 1000).toFixed(2)}s linear` 
+                        transition: `transform ${dragged ? `${(throttleInterval / 1000).toFixed(2)}s linear`
                             : '0.6s ease-in-out'}`
                     }}>
                         {images.map((image, i) => (

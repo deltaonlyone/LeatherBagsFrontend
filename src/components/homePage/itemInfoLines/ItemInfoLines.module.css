@@ -36,27 +36,123 @@
     font-size: 1.2vw;
     font-weight: bolder;
 }
-@media(max-width:1440px) {
 
+@media (max-width: 1440px) {
+    .textWrap {
+        margin: 0 13vw;
+        height: 7vw;
+        font-size: 2.2vw;
+    }
 
+    .statsWrap {
+        height: 7vw;
+        padding: 0 13vw;
+    }
+
+    .numbs {
+        font-size: 2.7vw;
+    }
+
+    .secondaryText {
+        font-size: 1.4vw;
+    }
 }
 
-@media(max-width:1280px) {
+@media (max-width: 1280px) {
+    .textWrap {
+        margin: 0 11vw;
+        height: 8vw;
+        font-size: 2.4vw;
+    }
 
+    .statsWrap {
+        height: 8vw;
+        padding: 0 11vw;
+    }
+
+    .numbs {
+        font-size: 2.9vw;
+    }
+
+    .secondaryText {
+        font-size: 1.6vw;
+    }
 }
 
-@media(max-width:1024px) {
+@media (max-width: 1024px) {
+    .textWrap {
+        margin: 0 9vw;
+        height: 9vw;
+        font-size: 2.6vw;
+    }
 
+    .statsWrap {
+        height: 9vw;
+        padding: 0 9vw;
+    }
+
+    .numbs {
+        font-size: 3.1vw;
+    }
+
+    .secondaryText {
+        font-size: 1.8vw;
+    }
 }
 
-@media(max-width:768px) {
+@media (max-width: 768px) {
+    .textWrap {
+        margin: 0 7vw;
+        height: 15vw;
+        font-size: 4vw;
+    }
 
+    .statsWrap {
+        height: 30vw;
+        padding: 0 7vw;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 3vw 5vw;
+    }
+
+    .numbs {
+        font-size: 4.5vw;
+    }
+
+    .statItem {
+        flex: 2 2 auto;
+        width: 35vw;
+        box-sizing: border-box;
+    }
+
+    .secondaryText {
+        font-size: 3vw;
+    }
 }
 
 
-@media(max-width:480px) {
+@media (max-width: 480px) {
+    .textWrap {
+        margin: 0 5vw;
+        height: 20vw;
+        font-size: 5vw;
+    }
 
+    .statsWrap {
+        height: 37vw;
+        padding: 0 3vw;
+    }
+
+    .numbs {
+        font-size: 5vw;
+    }
+
+    .statItem {
+        width: 40vw;
+    }
+
+    .secondaryText {
+        font-size: 3.8vw;
+    }
 }
 
-@media(max-width:320px) {
-}
