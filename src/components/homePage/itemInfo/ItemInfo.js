@@ -29,7 +29,7 @@ const ItemInfo = ({type, images, features, openForm}) => {
         openForm(fullType, size, color, keyHolder);
 
     return (
-        <div className={'centeredComponent'}>
+        <div className={'centeredComponent not-draggable'}>
             <div className={`row ${style.content}`}>
                 <div className={style.slider}>
                     <Carousel mainWidth='30vw' mainHeight='60vh'
