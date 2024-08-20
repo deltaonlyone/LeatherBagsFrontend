@@ -1,8 +1,10 @@
 import axios from "axios";
 
+const apiKey = process.env.REACT_APP_API_KEY;
+
 export async function loadCities(cityName, cityPage, pageLimit) {
     return await axios.post('https://api.novaposhta.ua/v2.0/json/', {
-        apiKey: 'ad9f19d77f0329680046910f08946c8f',
+        apiKey: apiKey,
         modelName: 'AddressGeneral',
         calledMethod: 'searchSettlements',
         methodProperties: {
@@ -15,7 +17,7 @@ export async function loadCities(cityName, cityPage, pageLimit) {
 
 export async function estimateDeliveryPrice(cityRef, price) {
     return await axios.post('https://api.novaposhta.ua/v2.0/json/', {
-        apiKey: 'ad9f19d77f0329680046910f08946c8f',
+        apiKey,
         modelName: "InternetDocumentGeneral",
         calledMethod: "getDocumentPrice",
         methodProperties: {
@@ -43,7 +45,7 @@ export async function loadDepartments(cityRef, departmentName,
     }
 
     return await axios.post('https://api.novaposhta.ua/v2.0/json/', {
-        apiKey: 'ad9f19d77f0329680046910f08946c8f',
+        apiKey,
         modelName: 'AddressGeneral',
         calledMethod: 'getWarehouses',
         methodProperties: properties
