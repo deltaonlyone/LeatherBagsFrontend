@@ -4,10 +4,12 @@ const ErrorDialog = ({close}) => {
     return (
         <div className={`${styles.dialog} ${styles.errorDialog}`}>
             <h3>Помилка</h3>
-            <p>
-                <span>Вибачте.</span> <span>Сталася помилка.</span> <span>Ваше замовлення не було оформлене.</span>
+            <div className={styles.text}>
+                <span>Вибачте.&nbsp;</span>
+                <span>Сталася помилка.&nbsp;</span>
+                <span>Ваше замовлення не було оформлене.&nbsp;</span>
                 <span>Спробуйте ще раз.</span>
-            </p>
+            </div>
             <button onClick={close}>Закрити</button>
         </div>
     )

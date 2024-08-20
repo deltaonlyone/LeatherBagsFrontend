@@ -1,7 +1,7 @@
 import ModalDialog from "../../elements/modalDialog/ModalDialog";
 import OkDialog from "./OkDialog";
 import ErrorDialog from "./ErrorDialog";
-import styles from "./ResultDialog.module.css";
+import {TailSpin} from "react-loader-spinner";
 
 const ResultDialogs = ({result, setResult}) => {
     return (
@@ -15,8 +15,12 @@ const ResultDialogs = ({result, setResult}) => {
                     <ErrorDialog close={() => setResult('')}/> : ''
                 }
                 {result === 'loading' ?
-                    <img src='/home/loadingGif.gif' alt='loading'
-                         className={styles.loading}/> : ''
+                    <TailSpin
+                        height='20vmin'
+                        width='20vmin'
+                        color='aliceblue'
+                        secondaryColor='aliceblue'
+                    /> : ''
                 }
             </div>
         </ModalDialog>
