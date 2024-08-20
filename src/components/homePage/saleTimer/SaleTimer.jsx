@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import styles from './SaleTimer.module.css';
 
 const SaleTimer = () => {
-    const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
+    const [timeLeft, setTimeLeft] = useState({days: 0, hours: 0, minutes: 0});
 
     useEffect(() => {
         const calculateTimeLeft = () => {

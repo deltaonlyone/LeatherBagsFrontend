@@ -59,17 +59,17 @@ const InputPhoneNum = ({name, value, setValue, setErrors, submitting}) => {
 
     return (
         <FormInput error={error} focused={focused}>
-                <input type='tel' name='phoneNum'
-                       className={`${styles.input} ${error.hasError ? styles.errorInput : ''}`}
-                       placeholder='+38 050 517 52 51'
-                       value={displayValue}
-                       onInput={handleInput}
-                       onFocus={() => setFocused(true)}
-                       onBlur={() => {
-                           setFocused(true);
-                           checkError();
-                       }}
-                       required/>
+            <input type='tel' name='phoneNum'
+                   className={`${styles.input} ${error.hasError ? styles.errorInput : ''}`}
+                   placeholder='+38 050 517 52 51'
+                   value={displayValue}
+                   onInput={handleInput}
+                   onFocus={() => setFocused(true)}
+                   onBlur={() => {
+                       setFocused(true);
+                       checkError();
+                   }}
+                   required/>
         </FormInput>
     )
 }
