@@ -35,19 +35,3 @@
 .errorDialog {
     border: 1px solid red;
 }
-
-.loading {
-    /*filter: invert(90%);*/
-    width: 15vmin;
-    animation: spin 1.5s linear infinite;
-    transition: 0s;
-}
-
-@keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}

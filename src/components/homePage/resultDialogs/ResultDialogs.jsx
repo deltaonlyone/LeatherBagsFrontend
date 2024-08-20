@@ -15,8 +15,7 @@ const ResultDialogs = ({result, setResult}) => {
                     <ErrorDialog close={() => setResult('')}/> : ''
                 }
                 {result === 'loading' ?
-                    <img src='/home/loading.png' alt='loading'
-                         className={styles.loading}/> : ''
+                    <img src='/home/loading.png' alt='loading'/> : ''
                 }
             </div>
         </ModalDialog>
