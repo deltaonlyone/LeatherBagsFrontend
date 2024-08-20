@@ -2,10 +2,6 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 import styles from './Carousel.module.css';
 
 const Carousel = ({images}) => {
-    const [index, setIndex] = useState(0);
-    const [xPosition, setXPosition] = useState(0);
-    const [smallXPosition, setSmallXPosition] = useState(0);
-
     const mainWrapper = useRef();
     const mainWrapperWidth = useRef(0);
     const mainSliderWidth = useRef(0);
@@ -15,7 +11,48 @@ const Carousel = ({images}) => {
     const maxSmallOffset = useRef(0);
     const smallImageWidth = useRef(0);
 
-    const calculateSliderSize = useCallback(() => {
+    const additionalImages = useRef(images.length * 1);
+    const newImages = [...images, ...images, ...images];
+
+    const [sliderImages] = useState([...newImages]);
+    const [transitionDuration, setTransitionDuration] = useState(-1);
+
+    const [index, setIndex] = useState(additionalImages.current);
+    const [xPosition, setXPosition] = useState(0);
+    const [smallXPosition, setSmallXPosition] = useState(0);
+
+    const canMove = useRef(true);
+
+    const calculateSmallXPosition = useCallback((index) => {
+        return Math.min(0, Math.max(
+            -(index - 1) * smallImageWidth.current, maxSmallOffset.current));
+    }, []);
+
+    const setIndexAndPosition = (newIndex, withAnimation = true) => {
+        if (withAnimation) {
+            setTransitionDuration(0.5);
+            canMove.current = false;
+        } else {
+            setTransitionDuration(0);
+        }
+
+        setIndex(newIndex);
+        setXPosition(newIndex * 100);
+        setSmallXPosition(calculateSmallXPosition(newIndex));
+    };
+
+    const resetSlider = () => {
+        if (index < additionalImages.current) {
+            setIndexAndPosition(additionalImages.current +
+                index % images.length, false);
+        } else if (index >= images.length + additionalImages.current) {
+            setIndexAndPosition(additionalImages.current +
+                (index - additionalImages.current) % images.length, false);
+        }
+        canMove.current = true;
+    };
+
+    const calculateSliderSize = () => {
         if (!smallSlider.current || !mainWrapper.current
             || smallSliderImages.current.length < 2) {
             return;
@@ -34,17 +71,6 @@ const Carousel = ({images}) => {
         smallImageWidth.current = secondLeft - firstLeft;
         let imagesWidth = lastRight - firstLeft;
         maxSmallOffset.current = smallSlider.current.offsetWidth - imagesWidth;
-    }, []);
-
-    const calculateSmallXPosition = useCallback((index) => {
-        return Math.min(0, Math.max(
-            -(index - 1) * smallImageWidth.current, maxSmallOffset.current));
-    }, []);
-
-    const setIndexAndPosition = (newIndex) => {
-        setIndex(newIndex);
-        setXPosition(newIndex * 100);
-        setSmallXPosition(calculateSmallXPosition(newIndex));
     };
 
     useEffect(() => {
@@ -53,22 +79,21 @@ const Carousel = ({images}) => {
             calculateSliderSize();
             setIndexAndPosition(index);
         });
+        setIndexAndPosition(index, false);
     }, []);
 
     const handleClickPrev = (e) => {
         e.stopPropagation();
-        if (index === 0) {
-            setIndexAndPosition(images.length - 1);
-        } else {
+
+        if (canMove.current && index > 1) {
             setIndexAndPosition(index - 1);
         }
     };
 
     const handleClickNext = (e) => {
         e.stopPropagation();
-        if (index === images.length - 1) {
-            setIndexAndPosition(0);
-        } else {
+
+        if (canMove.current && index < sliderImages.length - 1) {
             setIndexAndPosition(index + 1);
         }
     };
@@ -78,7 +103,8 @@ const Carousel = ({images}) => {
     const [dragged, setDragged] = useState(false);
 
     const lastUpdateTime = useRef(new Date());
-    const throttleInterval = 100;
+    const throttleInterval = useRef(100);
+    const draggingDuration = useRef(+(throttleInterval.current / 1000).toFixed(2));
 
     const handleSliderDragStart = (e) => {
         e.stopPropagation();
@@ -114,21 +140,23 @@ const Carousel = ({images}) => {
 
     const dragPosX = (x) => {
         const currentTime = new Date();
-        if (currentTime - lastUpdateTime.current > throttleInterval) {
+        if (currentTime - lastUpdateTime.current > throttleInterval.current) {
+            setTransitionDuration(draggingDuration.current);
             setDraggingIndex(x);
 
             const dragX = indexStart.current + (mouseStart.current - x) / mainWrapperWidth.current;
             setXPosition(Math.max(0,
-                Math.min(dragX, images.length - 1)) * 100);
+                Math.min(dragX, sliderImages.length - 1)) * 100);
 
             lastUpdateTime.current = currentTime;
         }
     };
 
     const setDraggingIndex = (x) => {
-        const indexDiff = Math.round((mouseStart.current - x) / mainWrapperWidth.current);
+        let xDiff = (mouseStart.current - x) / mainWrapperWidth.current;
+        const indexDiff = xDiff < 0 ? Math.floor(xDiff + 0.2) : Math.ceil(xDiff - 0.2);
         const index = Math.max(0, Math.min(
-            indexStart.current + indexDiff, images.length - 1))
+            indexStart.current + indexDiff, sliderImages.length - 1))
 
         setIndex(index);
         setSmallXPosition(calculateSmallXPosition(index));
@@ -150,13 +178,15 @@ const Carousel = ({images}) => {
                      onTouchStart={handleSliderTouchStart}
                      onTouchMove={handleSliderTouchMove}
                      onTouchEnd={handleSliderTouchEnd}>
-                    <div className={styles.mainSlider} style={{
-                        transform: `translateX(${-xPosition}%)`,
-                        transition: `transform ${dragged ? `${(throttleInterval / 1000).toFixed(2)}s linear`
-                            : '0.6s ease-in-out'}`
-                    }}>
-                        {images.map((image, i) => (
-                            <img draggable='false' src={image} alt={image} key={i}/>
+                    <div className={styles.mainSlider}
+                         onTransitionEnd={resetSlider}
+                         style={{
+                             transform: `translateX(${-xPosition}%)`,
+                             transition: `transform ${transitionDuration}s 
+                                    ${dragged ? 'linear' : 'ease-in-out'}`
+                         }}>
+                        {sliderImages.map((image, i) => (
+                            <img draggable='false' src={image} alt={`sliderImg${i}`} key={i}/>
                         ))}
                     </div>
                 </div>
@@ -172,9 +202,10 @@ const Carousel = ({images}) => {
             <div className={styles.smallWrapper}>
                 <div className={styles.smallSlider} ref={smallSlider}
                      style={{
-                         transform: `translateX(${smallXPosition}px)`
+                         transform: `translateX(${smallXPosition}px)`,
+                         transitionDuration: `${transitionDuration}s`
                      }}>
-                    {images.map((image, i) => (
+                    {sliderImages.map((image, i) => (
                         <div className={`${styles.cover} ${styles.coveredImage}`}
                              key={i} onClick={() => setIndexAndPosition(i)}
                              ref={(el) => (smallSliderImages.current[i] = el)}>
