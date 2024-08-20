@@ -11,17 +11,17 @@ const Carousel = ({images}) => {
     const maxSmallOffset = useRef(0);
     const smallImageWidth = useRef(0);
 
-    const additionalImages = useRef(images.length * 1);
+    const additionalImages = images.length * 1;
     const newImages = [...images, ...images, ...images];
 
     const [sliderImages] = useState([...newImages]);
     const [transitionDuration, setTransitionDuration] = useState(-1);
 
-    const [index, setIndex] = useState(additionalImages.current);
+    const [index, setIndex] = useState(additionalImages);
     const [xPosition, setXPosition] = useState(0);
     const [smallXPosition, setSmallXPosition] = useState(0);
 
-    const canMove = useRef(true);
+    const canMove = useRef(2);
 
     const calculateSmallXPosition = useCallback((index) => {
         return Math.min(0, Math.max(
@@ -31,25 +31,30 @@ const Carousel = ({images}) => {
     const setIndexAndPosition = (newIndex, withAnimation = true) => {
         if (withAnimation) {
             setTransitionDuration(0.5);
-            canMove.current = false;
         } else {
             setTransitionDuration(0);
         }
 
-        setIndex(newIndex);
-        setXPosition(newIndex * 100);
-        setSmallXPosition(calculateSmallXPosition(newIndex));
+        if (newIndex !== index || !withAnimation) {
+            if (withAnimation) {
+                canMove.current -= 1;
+            }
+
+            setIndex(newIndex);
+            setXPosition(newIndex * 100);
+            setSmallXPosition(calculateSmallXPosition(newIndex));
+        }
     };
 
     const resetSlider = () => {
-        if (index < additionalImages.current) {
-            setIndexAndPosition(additionalImages.current +
-                index % images.length, false);
-        } else if (index >= images.length + additionalImages.current) {
-            setIndexAndPosition(additionalImages.current +
-                (index - additionalImages.current) % images.length, false);
+        if (index < additionalImages) {
+            const newIndex = additionalImages + index % images.length;
+            setIndexAndPosition(newIndex, false);
+        } else if (index >= images.length + additionalImages) {
+            const newIndex = additionalImages + (index - additionalImages) % images.length;
+            setIndexAndPosition(newIndex, false);
         }
-        canMove.current = true;
+        canMove.current = 2;
     };
 
     const calculateSliderSize = () => {
@@ -74,18 +79,20 @@ const Carousel = ({images}) => {
     };
 
     useEffect(() => {
-        calculateSliderSize();
         window.addEventListener('resize', () => {
             calculateSliderSize();
-            setIndexAndPosition(index);
+            setIndexAndPosition(index, false);
         });
-        setIndexAndPosition(index, false);
+        setTimeout(() => {
+            calculateSliderSize();
+            setIndexAndPosition(additionalImages, false);
+        }, 1);
     }, []);
 
     const handleClickPrev = (e) => {
         e.stopPropagation();
 
-        if (canMove.current && index > 1) {
+        if (canMove.current > 0 && index > 1) {
             setIndexAndPosition(index - 1);
         }
     };
@@ -93,7 +100,7 @@ const Carousel = ({images}) => {
     const handleClickNext = (e) => {
         e.stopPropagation();
 
-        if (canMove.current && index < sliderImages.length - 1) {
+        if (canMove.current > 0 && index < sliderImages.length - 1) {
             setIndexAndPosition(index + 1);
         }
     };
@@ -140,13 +147,9 @@ const Carousel = ({images}) => {
 
     const dragPosX = (x) => {
         const currentTime = new Date();
-        if (currentTime - lastUpdateTime.current > throttleInterval.current) {
+        if (dragged && currentTime - lastUpdateTime.current > throttleInterval.current) {
             setTransitionDuration(draggingDuration.current);
             setDraggingIndex(x);
-
-            const dragX = indexStart.current + (mouseStart.current - x) / mainWrapperWidth.current;
-            setXPosition(Math.max(0,
-                Math.min(dragX, sliderImages.length - 1)) * 100);
 
             lastUpdateTime.current = currentTime;
         }
@@ -154,21 +157,25 @@ const Carousel = ({images}) => {
 
     const setDraggingIndex = (x) => {
         let xDiff = (mouseStart.current - x) / mainWrapperWidth.current;
-        const indexDiff = xDiff < 0 ? Math.floor(xDiff + 0.2) : Math.ceil(xDiff - 0.2);
-        const index = Math.max(0, Math.min(
-            indexStart.current + indexDiff, sliderImages.length - 1))
+        let indexDiff = xDiff < 0 ? Math.floor(xDiff + 0.2) : Math.ceil(xDiff - 0.2);
+        indexDiff = Math.max(-2, Math.min(indexDiff, 2));
+        let index = Math.max(0, Math.min(
+            indexStart.current + indexDiff, sliderImages.length - 1));
 
-        setIndex(index);
-        setSmallXPosition(calculateSmallXPosition(index));
+        if (index < additionalImages ||
+            index >= images.length + additionalImages) {
+            stopDragging();
+        }
+
+        setIndexAndPosition(index);
     }
 
     const stopDragging = () => {
         setDragged(false);
-        setIndexAndPosition(index);
     }
 
     return (
-        <div className={'column not-draggable'}>
+        <div className={`${styles.carousel} not-draggable`}>
             <div className={`${styles.aspectRatioBox} ${styles.ratio120}`}>
                 <div className={`${styles.mainWrapper} ${styles.coveredImage}`}
                      ref={mainWrapper} draggable='true'

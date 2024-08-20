@@ -4,7 +4,10 @@ const OkDialog = ({close}) => {
     return (
         <div className={styles.dialog}>
             <h3>Вітаємо</h3>
-            <p><span>Ваше замовлення успішно оформлено.</span> <span>Очікуйте на дзвінок від менеджера.</span></p>
+            <div className={styles.text}>
+                <span>Ваше замовлення успішно оформлено.&nbsp;</span>
+                <span>Очікуйте на дзвінок від менеджера.</span>
+            </div>
             <button onClick={close}>Ок</button>
         </div>
     )
