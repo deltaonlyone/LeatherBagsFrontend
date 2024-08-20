@@ -1,11 +1,17 @@
 .videoContainer {
     background-color: var(--secondary-background-color);
     padding: 5vh 0;
+
+}
+
+.containerVideo {
+    display: flex;
+    flex-direction: row;
 }
 
 .itemVideo {
-    width: 100%;
-    object-fit: contain;
+    height: 100%;
+    object-fit: fill;
     border-radius: 2vw;
 }
 
@@ -27,30 +33,14 @@
 
 .coveredVideo {
     height: 40vw;
-    width: 70vw;
+    width: 40vw;
     position: relative;
     top: 0;
     left: 0;
     margin-top: 5vh;
 }
 
-.arrow {
-    height: 10%;
-    position: absolute;
-    top: 45%;
-}
-
-.arrowLeft {
-    left: 0;
-    transform: rotate(90deg);
-}
-
-.arrowRight {
-    right: 0;
-    transform: rotate(-90deg);
-}
-
-@media(max-width:1440px) {
+@media (max-width: 1440px) {
     .videoContainer {
         padding: 5vh 0;
     }
@@ -66,23 +56,14 @@
     }
 
     .coveredVideo {
-        height: 41vw;
-        width: 74vw;
+        height: 52vw;
         position: relative;
-        top: 0;
-        left: 0;
         margin-top: 5vh;
-    }
-
-    .arrow {
-        height: 10%;
-        position: absolute;
-        top: 45%;
     }
 
 }
 
-@media(max-width:1280px) {
+@media (max-width: 1280px) {
     .videoContainer {
         padding: 4vh 0;
     }
@@ -98,22 +79,14 @@
     }
 
     .coveredVideo {
-        height: 44vw;
-        width: 78vw;
+        height: 54vw;
         position: relative;
-        top: 0;
-        left: 0;
         margin-top: 4vh;
     }
 
-    .arrow {
-        height: 10%;
-        position: absolute;
-        top: 45%;
-    }
 }
 
-@media(max-width:1024px) {
+@media (max-width: 1024px) {
     .videoContainer {
         padding: 3vh 0;
     }
@@ -129,28 +102,20 @@
     }
 
     .coveredVideo {
-        height: 47vw;
-        width: 82vw;
+        height: 56vw;
         position: relative;
-        top: 0;
-        left: 0;
         margin-top: 3vh;
-    }
-
-    .arrow {
-        height: 10%;
-        position: absolute;
-        top: 45%;
     }
 }
 
-@media(max-width:768px) {
+@media (max-width: 768px) {
     .videoContainer {
         padding: 3vh 0;
     }
 
-    .itemVideo {
-        border-radius: 0;
+    .containerVideo {
+        display: flex;
+        flex-direction: column;
     }
 
     .loopingText {
@@ -160,30 +125,17 @@
     }
 
     .coveredVideo {
-        height: 53vw;
+        height: 60vh;
         width: 100%;
         position: relative;
-        top: 0;
-        left: 0;
         margin-top: 3vh;
-    }
-
-    .arrow {
-        height: 15%;
-        position: absolute;
-        padding: 15px;
-        top: 40%;
     }
 }
 
 
-@media(max-width:480px) {
+@media (max-width: 480px) {
     .videoContainer {
         padding: 2vh 0;
-    }
-
-    .itemVideo {
-        border-radius: 0;
     }
 
     .loopingText {
@@ -193,23 +145,14 @@
     }
 
     .coveredVideo {
-        height: 53vw;
+        height: 60vh;
         width: 100%;
         position: relative;
-        top: 0;
-        left: 0;
         margin-top: 2vh;
-    }
-
-    .arrow {
-        height: 15%;
-        position: absolute;
-        padding: 10px;
-        top: 40%;
     }
 }
 
-@media(max-width:320px) {
+@media (max-width: 320px) {
     .videoContainer {
         padding: 3vh 0;
     }
@@ -225,7 +168,7 @@
     }
 
     .coveredVideo {
-        height: 48vw;
+        height: 60vh;
         width: 100%;
         position: relative;
         top: 0;
@@ -233,10 +176,4 @@
         margin-top: 3vh;
     }
 
-    .arrow {
-        height: 15%;
-        position: absolute;
-        padding: 5px;
-        top: 40%;
-    }
 }
